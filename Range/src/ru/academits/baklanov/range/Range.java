@@ -34,8 +34,8 @@ public class Range {
     }
 
     public Range getIntersection(Range range) {
-        double newFrom = (this.from > range.getFrom()) ? this.from : range.getFrom();
-        double newTo = (this.to < range.getTo()) ? this.to : range.getTo();
+        double newFrom = (this.from > range.from) ? this.from : range.from;
+        double newTo = (this.to < range.to) ? this.to : range.to;
 
         if (newFrom <= newTo) {
             return new Range(newFrom, newTo);
@@ -45,29 +45,29 @@ public class Range {
     }
 
     public Range[] getUnion(Range range) {
-        if (range.getFrom() <= this.to && this.from <= range.getTo()) {
-            double newFrom = (this.from < range.getFrom()) ? this.from : range.getFrom();
-            double newTo = (this.to > range.getTo()) ? this.to : range.getTo();
+        if (range.from <= this.to && this.from <= range.to) {
+            double newFrom = (this.from < range.from) ? this.from : range.from;
+            double newTo = (this.to > range.to) ? this.to : range.to;
 
             return new Range[] {new Range(newFrom, newTo)};
-        } else if (this.from < range.getFrom()) {
-            return new Range[] {new Range(this.from, this.to), new Range(range.getFrom(), range.getTo())};
+        } else if (this.from < range.from) {
+            return new Range[] {new Range(this.from, this.to), new Range(range.from, range.to)};
         } else {
-            return new Range[] {new Range(range.getFrom(), range.getTo()), new Range(this.from, this.to)};
+            return new Range[] {new Range(range.from, range.to), new Range(this.from, this.to)};
         }
     }
 
     public Range[] minus(Range range) {
-        if (this.from >= range.getTo() || range.getFrom() >= this.to) {
+        if (this.from >= range.to || range.from >= this.to) {
             return new Range [] {new Range(this.from, this.to)};
-        } else if (this.from >= range.getFrom() && this.to <= range.getTo()) {
+        } else if (this.from >= range.from && this.to <= range.to) {
             return null;
-        } else if (this.from < range.getFrom() && this.to > range.getTo()) {
-            return new Range[] {new Range(this.from, range.getFrom()), new Range(range.getTo(), this.to)};
-        } else  if (this.from < range.getFrom()) {
-            return new Range[]{new Range(this.from, range.getFrom())};
+        } else if (this.from < range.from && this.to > range.to) {
+            return new Range[] {new Range(this.from, range.from), new Range(range.to, this.to)};
+        } else  if (this.from < range.from) {
+            return new Range[]{new Range(this.from, range.from)};
         } else {
-            return new Range[]{new Range(range.getTo(), this.to)};
+            return new Range[]{new Range(range.to, this.to)};
         }
     }
 }

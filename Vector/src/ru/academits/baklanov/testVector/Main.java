@@ -1,4 +1,6 @@
-package ru.academits.baklanov.vector;
+package ru.academits.baklanov.testVector;
+
+import ru.academits.baklanov.tasks.Vector;
 
 public class Main {
     public static void main(String[] args) {

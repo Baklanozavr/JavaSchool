@@ -1,4 +1,4 @@
-package ru.academits.baklanov.vector;
+package ru.academits.baklanov.tasks;
 
 public class Vector {
     private double[] coordinates;
@@ -102,5 +102,52 @@ public class Vector {
         }
 
         return Math.sqrt(squaredLength);
+    }
+
+    public static Vector sumOf(Vector vector1, Vector vector2) {
+        Vector maxVector = (vector1.getSize() >= vector2.getSize()) ? vector1 : vector2;
+        Vector minVector = (vector1.getSize() < vector2.getSize()) ? vector1 : vector2;
+
+        double[] newCoordinates = new double[maxVector.getSize()];
+
+        for (int i = 0; i < minVector.getSize(); ++i) {
+            newCoordinates[i] = vector1.coordinates[i] + vector2.coordinates[i];
+        }
+        System.arraycopy(maxVector.coordinates, minVector.getSize(), newCoordinates, minVector.getSize(), maxVector.getSize() - minVector.getSize());
+
+        return new Vector(newCoordinates);
+    }
+
+    public static Vector difference(Vector vector1, Vector vector2) {
+        Vector maxVector = (vector1.getSize() >= vector2.getSize()) ? vector1 : vector2;
+        Vector minVector = (vector1.getSize() < vector2.getSize()) ? vector1 : vector2;
+
+        double[] newCoordinates = new double[maxVector.getSize()];
+
+        for (int i = 0; i < minVector.getSize(); ++i) {
+            newCoordinates[i] = vector1.coordinates[i] - vector2.coordinates[i];
+        }
+
+        if (vector1.getSize() >= vector2.getSize()){
+            System.arraycopy(vector1.coordinates, vector2.getSize(), newCoordinates, vector2.getSize(), vector1.getSize() - vector2.getSize());
+        } else {
+            for (int i = minVector.getSize(); i < maxVector.getSize(); ++i) {
+                newCoordinates[i] = - maxVector.coordinates[i];
+            }
+        }
+
+        return new Vector(newCoordinates);
+    }
+
+    public static double scalarProduct(Vector vector1, Vector vector2) {
+        Vector minVector = (vector1.getSize() < vector2.getSize()) ? vector1 : vector2;
+
+        double scalar = 0;
+
+        for (int i = 0; i < minVector.getSize(); ++i) {
+            scalar += vector1.coordinates[i] * vector2.coordinates[i];
+        }
+
+        return scalar;
     }
 }

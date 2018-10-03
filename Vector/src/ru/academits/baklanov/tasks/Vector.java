@@ -1,5 +1,7 @@
 package ru.academits.baklanov.tasks;
 
+import java.util.Arrays;
+
 public class Vector {
     private double[] coordinates;
 
@@ -31,8 +33,27 @@ public class Vector {
 
     }
 
+
     public int getSize() {
         return coordinates.length;
+    }
+
+    public double getLength() {
+        double squaredLength = 0;
+
+        for (double x : this.coordinates) {
+            squaredLength += x * x;
+        }
+
+        return Math.sqrt(squaredLength);
+    }
+
+    public double getCoordinate(int position) {
+        return coordinates[position - 1];
+    }
+
+    public void setCoordinate(int position, double newCoordinate) {
+        coordinates[position - 1] = newCoordinate;
     }
 
     public String toString() {
@@ -47,45 +68,35 @@ public class Vector {
         Vector maxVector = (this.getSize() >= vector.getSize()) ? this : vector;
         Vector minVector = (this.getSize() < vector.getSize()) ? this : vector;
 
-        double[] newCoordinates = new double[maxVector.getSize()];
+        Vector tempVector = new Vector(maxVector.coordinates);
 
         for (int i = 0; i < minVector.getSize(); ++i) {
-            newCoordinates[i] = this.coordinates[i] + vector.coordinates[i];
+            tempVector.coordinates[i] += minVector.coordinates[i];
         }
-        System.arraycopy(maxVector.coordinates, minVector.getSize(), newCoordinates, minVector.getSize(), maxVector.getSize() - minVector.getSize());
 
-        return new Vector(newCoordinates);
+        return tempVector;
     }
 
     public Vector minus(Vector vector) {
         Vector maxVector = (this.getSize() >= vector.getSize()) ? this : vector;
-        Vector minVector = (this.getSize() < vector.getSize()) ? this : vector;
 
-        double[] newCoordinates = new double[maxVector.getSize()];
+        Vector tempVector = new Vector(maxVector.getSize(), this.coordinates);
 
-        for (int i = 0; i < minVector.getSize(); ++i) {
-            newCoordinates[i] = this.coordinates[i] - vector.coordinates[i];
+        for (int i = 0; i < vector.getSize(); ++i) {
+            tempVector.coordinates[i] -= vector.coordinates[i];
         }
 
-        if (this.getSize() >= vector.getSize()){
-            System.arraycopy(this.coordinates, vector.getSize(), newCoordinates, vector.getSize(), this.getSize() - vector.getSize());
-        } else {
-            for (int i = minVector.getSize(); i < maxVector.getSize(); ++i) {
-                newCoordinates[i] = - maxVector.coordinates[i];
-            }
-        }
-
-        return new Vector(newCoordinates);
+        return tempVector;
     }
 
     public Vector multiply(double scalar) {
-        double[] newCoordinates = new double[this.getSize()];
+        Vector tempVector = new Vector(this.getSize());
 
-        for (int i = 0; i < newCoordinates.length; ++i) {
-            newCoordinates[i] = this.coordinates[i] * scalar;
+        for (int i = 0; i < tempVector.getSize(); ++i) {
+            tempVector.coordinates[i] = this.coordinates[i] * scalar;
         }
 
-        return new Vector(newCoordinates);
+        return tempVector;
     }
 
     public void reverse() {
@@ -94,49 +105,45 @@ public class Vector {
         }
     }
 
-    public double getLength() {
-        double squaredLength = 0;
-
-        for (double x : this.coordinates) {
-            squaredLength += x * x;
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        } else {
+            Vector v = (Vector) o;
+            return Arrays.equals(this.coordinates, v.coordinates);
         }
-
-        return Math.sqrt(squaredLength);
     }
+
+    public int hashCode() {
+        return Arrays.hashCode(this.coordinates);
+    }
+
 
     public static Vector sumOf(Vector vector1, Vector vector2) {
         Vector maxVector = (vector1.getSize() >= vector2.getSize()) ? vector1 : vector2;
         Vector minVector = (vector1.getSize() < vector2.getSize()) ? vector1 : vector2;
 
-        double[] newCoordinates = new double[maxVector.getSize()];
+        Vector tempVector = new Vector(maxVector.coordinates);
 
         for (int i = 0; i < minVector.getSize(); ++i) {
-            newCoordinates[i] = vector1.coordinates[i] + vector2.coordinates[i];
+            tempVector.coordinates[i] += minVector.coordinates[i];
         }
-        System.arraycopy(maxVector.coordinates, minVector.getSize(), newCoordinates, minVector.getSize(), maxVector.getSize() - minVector.getSize());
 
-        return new Vector(newCoordinates);
+        return tempVector;
     }
 
     public static Vector difference(Vector vector1, Vector vector2) {
         Vector maxVector = (vector1.getSize() >= vector2.getSize()) ? vector1 : vector2;
-        Vector minVector = (vector1.getSize() < vector2.getSize()) ? vector1 : vector2;
 
-        double[] newCoordinates = new double[maxVector.getSize()];
+        Vector tempVector = new Vector(maxVector.getSize(), vector1.coordinates);
 
-        for (int i = 0; i < minVector.getSize(); ++i) {
-            newCoordinates[i] = vector1.coordinates[i] - vector2.coordinates[i];
+        for (int i = 0; i < vector2.getSize(); ++i) {
+            tempVector.coordinates[i] -= vector2.coordinates[i];
         }
 
-        if (vector1.getSize() >= vector2.getSize()){
-            System.arraycopy(vector1.coordinates, vector2.getSize(), newCoordinates, vector2.getSize(), vector1.getSize() - vector2.getSize());
-        } else {
-            for (int i = minVector.getSize(); i < maxVector.getSize(); ++i) {
-                newCoordinates[i] = - maxVector.coordinates[i];
-            }
-        }
-
-        return new Vector(newCoordinates);
+        return tempVector;
     }
 
     public static double scalarProduct(Vector vector1, Vector vector2) {

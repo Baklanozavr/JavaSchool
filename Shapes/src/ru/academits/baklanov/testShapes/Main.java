@@ -1,6 +1,8 @@
 package ru.academits.baklanov.testShapes;
 
-import ru.academits.baklanov.tasks.*;
+import ru.academits.baklanov.tasks.Shape;
+import ru.academits.baklanov.tasks.Comparators.*;
+import ru.academits.baklanov.tasks.Shapes.*;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -26,7 +28,7 @@ public class Main {
 
     public static void main(String[] args) {
         Shape triangle1 = new Triangle(0, 0, 2, 0, 2, 2);
-        Shape triangle2 = new Triangle(0, 0, 3, 0, 3, 2);
+        Shape triangle2 = new Triangle(0, 0, 3, 0, 3, 3);
         Shape square1 = new Square(2);
         Shape rectangle1 = new Rectangle(2, 3);
         Shape rectangle2 = new Rectangle(4, 1.5);

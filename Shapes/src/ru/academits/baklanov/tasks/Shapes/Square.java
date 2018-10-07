@@ -1,4 +1,6 @@
-package ru.academits.baklanov.tasks;
+package ru.academits.baklanov.tasks.Shapes;
+
+import ru.academits.baklanov.tasks.Shape;
 
 public class Square implements Shape {
     private double side;

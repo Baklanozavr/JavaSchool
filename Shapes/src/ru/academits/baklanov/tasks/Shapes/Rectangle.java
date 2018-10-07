@@ -1,4 +1,6 @@
-package ru.academits.baklanov.tasks;
+package ru.academits.baklanov.tasks.Shapes;
+
+import ru.academits.baklanov.tasks.Shape;
 
 public class Rectangle implements Shape {
     private double height;
@@ -41,6 +43,10 @@ public class Rectangle implements Shape {
     }
 
     public int hashCode() {
-        return Double.hashCode(width + height);
+        final int prime = 13;
+        int hash = 1;
+        hash = prime * hash + Double.hashCode(width);
+        hash = prime * hash + Double.hashCode(height);
+        return hash;
     }
 }

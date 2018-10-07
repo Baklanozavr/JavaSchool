@@ -24,7 +24,7 @@ public class Main {
         System.out.println(vector3);
         System.out.println("Введите новую первую координату для экземпляра2:");
         vector2.setCoordinate(1, scanner.nextDouble());
-        System.out.printf("Первая координата вектора3: %s, ", vector3.getCoordinate(1));
+        System.out.printf("Первая координата вектора3: %s, ", vector3.getCoordinate(0));
         System.out.printf("вектор2: %s%n", vector2);
 
         System.out.printf("Тест инициализации экземпляра4 через массив %s и выбранную размерность%n", Arrays.toString(testArray2));
@@ -34,12 +34,14 @@ public class Main {
 
         System.out.println();
         System.out.println("вектор4 плюс вектор3 двумя способами:");
-        System.out.println(vector4.plus(vector3));
         System.out.println(Vector.sumOf(vector4, vector3));
+        vector4.plus(vector3);
+        System.out.println(vector4);
 
         System.out.println("вектор4 минус вектор3 двумя способами:");
-        System.out.println(vector4.minus(vector3));
         System.out.println(Vector.difference(vector4, vector3));
+        vector4.minus(vector3);
+        System.out.println(vector4);
 
         System.out.println("Скалярное произведение вектора4 и вектора3:");
         System.out.println(Vector.scalarProduct(vector4, vector3));
@@ -49,7 +51,8 @@ public class Main {
 
         System.out.printf("длинна вектора4: %s%n", vector4.getLength());
 
-        System.out.printf("умножение вектора4 на 5: %s%n", vector4.multiply(5));
+        vector4.multiply(5);
+        System.out.printf("умножение вектора4 на 5: %s%n", vector4);
 
         System.out.printf("размерность вектора4: %s%n", vector4.getSize());
     }

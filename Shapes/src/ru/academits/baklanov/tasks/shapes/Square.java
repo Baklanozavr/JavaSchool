@@ -30,12 +30,14 @@ public class Square implements Shape {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (o == null || o.getClass() != this.getClass()) {
-            return false;
-        } else {
-            Square s = (Square) o;
-            return side == s.side;
         }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Square s = (Square) o;
+        return side == s.side;
     }
 
     public int hashCode() {

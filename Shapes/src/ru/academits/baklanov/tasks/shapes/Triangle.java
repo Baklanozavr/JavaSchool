@@ -54,13 +54,14 @@ public class Triangle implements Shape {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (o == null || o.getClass() != this.getClass()) {
-            return false;
-        } else {
-            Triangle t = (Triangle) o;
-
-            return t.x1 == x1 && t.x2 == x2 && t.x3 == x3 && t.y1 == y1 && t.y2 == y2 && t.y3 == y3;
         }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Triangle t = (Triangle) o;
+        return t.x1 == x1 && t.x2 == x2 && t.x3 == x3 && t.y1 == y1 && t.y2 == y2 && t.y3 == y3;
     }
 
     public int hashCode() {

@@ -32,12 +32,14 @@ public class Rectangle implements Shape {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (o == null || o.getClass() != this.getClass()) {
-            return false;
-        } else {
-            Rectangle r = (Rectangle) o;
-            return height == r.height && width == r.width;
         }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Rectangle r = (Rectangle) o;
+        return height == r.height && width == r.width;
     }
 
     public int hashCode() {

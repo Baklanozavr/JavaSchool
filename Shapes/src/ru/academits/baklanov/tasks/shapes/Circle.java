@@ -30,12 +30,14 @@ public class Circle implements Shape {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (o == null || o.getClass() != this.getClass()) {
-            return false;
-        } else {
-            Circle cir = (Circle) o;
-            return radius == cir.radius;
         }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Circle cir = (Circle) o;
+        return radius == cir.radius;
     }
 
     public int hashCode() {

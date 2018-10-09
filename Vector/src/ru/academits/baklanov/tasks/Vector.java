@@ -6,10 +6,7 @@ public class Vector {
     private double[] coordinates;
 
     public Vector(int dimension) {
-        if (dimension <= 0) {
-            throw new IllegalArgumentException("Размерность вектора должна быть больше ноля!");
-        }
-        coordinates = new double[dimension];
+        this(dimension, new double[0]);
     }
 
     public Vector(Vector vector) {
@@ -20,16 +17,20 @@ public class Vector {
     }
 
     public Vector(double[] coordinates) {
-        this(coordinates.length);
-        System.arraycopy(coordinates, 0, this.coordinates, 0, coordinates.length);
+        this(1, coordinates);
     }
 
     public Vector(int dimension, double[] coordinates) {
-        this(dimension);
-
-        if (coordinates.length > dimension) {
-            throw new IllegalArgumentException("Размерность вектора не может быть меньше размерности массива координат!");
+        if (coordinates == null) {
+            throw new IllegalArgumentException("Массив не найден! (null)");
         }
+
+        if (dimension <= 0) {
+            throw new IllegalArgumentException("Размерность вектора должна быть больше ноля!");
+        }
+
+        this.coordinates = new double[dimension >= coordinates.length ? dimension : coordinates.length];
+
         System.arraycopy(coordinates, 0, this.coordinates, 0, coordinates.length);
     }
 

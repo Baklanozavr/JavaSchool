@@ -9,8 +9,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        double[] testArray1 = {1, 2, 3, 4, 5};
-        double[] testArray2 = {3, 2, 1};
+        double[] testArray1 = {1, 2};
+        double[] testArray2 = {};
 
         System.out.println("Введите размерность первого вектора:");
         Vector vector1 = new Vector(scanner.nextInt());
@@ -23,7 +23,7 @@ public class Main {
         System.out.print("Тест инициализации экземпляра3 через копирование экземпляра2: ");
         System.out.println(vector3);
         System.out.println("Введите новую первую координату для экземпляра2:");
-        vector2.setCoordinate(1, scanner.nextDouble());
+        vector2.setCoordinate(0, scanner.nextDouble());
         System.out.printf("Первая координата вектора3: %s, ", vector3.getCoordinate(0));
         System.out.printf("вектор2: %s%n", vector2);
 

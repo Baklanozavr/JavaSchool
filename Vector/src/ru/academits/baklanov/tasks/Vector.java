@@ -123,12 +123,14 @@ public class Vector {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (o == null || o.getClass() != this.getClass()) {
-            return false;
-        } else {
-            Vector v = (Vector) o;
-            return Arrays.equals(this.coordinates, v.coordinates);
         }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Vector v = (Vector) o;
+        return Arrays.equals(this.coordinates, v.coordinates);
     }
 
     @Override

@@ -17,14 +17,8 @@ public class Triangle implements Shape {
         this.y3 = y3;
     }
 
-    private double[] getSides() {
-        double[] sides = new double[3];
-
-        sides[0] = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        sides[1] = Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
-        sides[2] = Math.sqrt(Math.pow(x2 - x3, 2) + Math.pow(y2 - y3, 2));
-
-        return sides;
+    private double getSide(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
     public double getWidth() {
@@ -40,15 +34,15 @@ public class Triangle implements Shape {
     }
 
     public double getPerimeter() {
-        double[] sides = this.getSides();
-
-        return sides[0] + sides[1] + sides[2];
+        return this.getSide(x1, y1, x2, y2) + this.getSide(x1, y1, x3, y3) + this.getSide(x2, y2, x3, y3);
     }
 
     public String toString() {
-        double[] sides = this.getSides();
+        double a = this.getSide(x1, y1, x2, y2);
+        double b = this.getSide(x1, y1, x3, y3);
+        double c = this.getSide(x3, y3, x2, y2);
 
-        return String.format("Triangle with sides: %s, %s, %s", sides[0], sides[1], sides[2]);
+        return String.format("Triangle with sides: %s, %s, %s", a, b, c);
     }
 
     public boolean equals(Object o) {

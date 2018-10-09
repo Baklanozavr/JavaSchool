@@ -7,6 +7,38 @@ public class Matrix {
         this(new double[n][m]);
     }
 
+    public Matrix(double[][] array2D) {
+        this(getVectors(array2D));
+    }
+
+    public Matrix(Vector[] vectors) {
+        if (vectors == null) {
+            throw new IllegalArgumentException("Массив не найден! (null)");
+        }
+
+        int maxRowLength = 0;
+
+        for (Vector vector : vectors) {
+            if (vector == null) {
+                throw new IllegalArgumentException("Вектор не найден! (null)");
+            }
+
+            if (maxRowLength < vector.getSize()) {
+                maxRowLength = vector.getSize();
+            }
+        }
+
+        if (vectors.length == 0) {
+            throw new IllegalArgumentException("Размерность матрицы должна быть больше ноля!");
+        }
+
+        rows = new Vector[vectors.length];
+
+        for (int i = 0; i < vectors.length; ++i) {
+            rows[i] = Vector.sumOf(new Vector(maxRowLength), vectors[i]);
+        }
+    }
+
     public Matrix(Matrix matrix) {
         if (matrix == null) {
             throw new IllegalArgumentException("Матрица не найдена! (null)");
@@ -19,33 +51,18 @@ public class Matrix {
         }
     }
 
-    public Matrix(double[][] array2D) {
-        //предполагается, что все вложенные массивы одного размера
+    private static Vector[] getVectors(double[][] array2D) {
         if (array2D == null) {
             throw new IllegalArgumentException("Массив не найден! (null)");
         }
 
-        if (array2D.length == 0 || array2D[0].length == 0) {
-            throw new IllegalArgumentException("Размерность матрицы должна быть больше ноля!");
-        }
-
-        rows = new Vector[array2D.length];
+        Vector[] vectors = new Vector[array2D.length];
 
         for (int i = 0; i < array2D.length; ++i) {
-            rows[i] = new Vector(array2D[i]);
-        }
-    }
-
-    public Matrix(Vector[] vectors) {
-        if (vectors == null) {
-            throw new IllegalArgumentException("Массив не найден! (null)");
+            vectors[i] = new Vector(array2D[i]);
         }
 
-        rows = new Vector[vectors.length];
-
-        for (int i = 0; i < vectors.length; ++i) {
-            rows[i] = new Vector(vectors[i]);
-        }
+        return vectors;
     }
 
     @Override

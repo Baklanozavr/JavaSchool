@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        double[][] testArray2D = {{1, 2}, {2, 3, 4}};
+        double[][] testArray2D = {{1, 2}, {2, 3, 4}, {5, 6}};
 
         double[] testArray1 = {1, 2};
         double[] testArray2 = {5, 3, 1};

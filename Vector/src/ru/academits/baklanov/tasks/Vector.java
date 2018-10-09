@@ -56,22 +56,24 @@ public class Vector {
     }
 
     public void plus(Vector vector) {
-        Vector maxVector = (this.getSize() >= vector.getSize()) ? this : vector;
-        Vector minVector = (this.getSize() < vector.getSize()) ? this : vector;
+        Vector minVector = vector;
 
-        coordinates = Arrays.copyOf(maxVector.coordinates, maxVector.coordinates.length);
+        if (coordinates.length < vector.coordinates.length) {
+            minVector = this;
+            coordinates = Arrays.copyOf(vector.coordinates, vector.coordinates.length);
+        }
 
-        for (int i = 0; i < minVector.getSize(); ++i) {
+        for (int i = 0; i < minVector.coordinates.length; ++i) {
             coordinates[i] += minVector.coordinates[i];
         }
     }
 
     public void minus(Vector vector) {
-        Vector maxVector = (this.getSize() >= vector.getSize()) ? this : vector;
+        if (coordinates.length < vector.coordinates.length) {
+            coordinates = Arrays.copyOf(coordinates, vector.coordinates.length);
+        }
 
-        coordinates = Arrays.copyOf(coordinates, maxVector.coordinates.length);
-
-        for (int i = 0; i < vector.getSize(); ++i) {
+        for (int i = 0; i < vector.coordinates.length; ++i) {
             coordinates[i] -= vector.coordinates[i];
         }
     }

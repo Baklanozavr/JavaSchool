@@ -17,7 +17,7 @@ public class Vector {
     }
 
     public Vector(double[] coordinates) {
-        this(1, coordinates);
+        this(coordinates.length, coordinates);
     }
 
     public Vector(int dimension, double[] coordinates) {

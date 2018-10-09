@@ -1,6 +1,4 @@
-package ru.academits.baklanov.tasks.Shapes;
-
-import ru.academits.baklanov.tasks.Shape;
+package ru.academits.baklanov.tasks.shapes;
 
 public class Triangle implements Shape {
     private double x1;

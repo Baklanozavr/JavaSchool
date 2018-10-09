@@ -10,7 +10,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         double[] testArray1 = {1, 2};
-        double[] testArray2 = {};
+        double[] testArray2 = {5, 3, 1};
 
         System.out.println("Введите размерность первого вектора:");
         Vector vector1 = new Vector(scanner.nextInt());

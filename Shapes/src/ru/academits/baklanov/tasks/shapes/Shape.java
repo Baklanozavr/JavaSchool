@@ -1,4 +1,4 @@
-package ru.academits.baklanov.tasks;
+package ru.academits.baklanov.tasks.shapes;
 
 public interface Shape {
     double getWidth();

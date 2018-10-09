@@ -1,6 +1,6 @@
-package ru.academits.baklanov.tasks.Comparators;
+package ru.academits.baklanov.tasks.сomparators;
 
-import ru.academits.baklanov.tasks.Shape;
+import ru.academits.baklanov.tasks.shapes.Shape;
 
 import java.util.Comparator;
 

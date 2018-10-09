@@ -1,8 +1,8 @@
 package ru.academits.baklanov.testShapes;
 
-import ru.academits.baklanov.tasks.Shape;
-import ru.academits.baklanov.tasks.Comparators.*;
-import ru.academits.baklanov.tasks.Shapes.*;
+import ru.academits.baklanov.tasks.shapes.Shape;
+import ru.academits.baklanov.tasks.сomparators.*;
+import ru.academits.baklanov.tasks.shapes.*;
 
 import java.util.Arrays;
 import java.util.Comparator;

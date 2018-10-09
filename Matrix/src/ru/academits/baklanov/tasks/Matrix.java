@@ -65,6 +65,35 @@ public class Matrix {
         return vectors;
     }
 
+    public int[] getSize() {
+        int[] size = new int[2];
+        size[0] = rows.length;
+        size[1] = rows[0].getSize();
+
+        return size;
+    }
+
+    public Vector getRow(int index) {
+        return rows[index];
+    }
+
+    public void setRow(int index, Vector vector) {
+        if (rows[0].getSize() < vector.getSize()) {
+            throw new IllegalArgumentException("Размер вектора больше размера матрицы!");
+        }
+        rows[index] = Vector.sumOf(new Vector(rows[0].getSize()), vector);
+    }
+
+    public Vector getColumn(int index) {
+        double[] tempArray = new double[rows.length];
+
+        for (int i = 0; i < rows.length; ++i) {
+            tempArray[i] = rows[i].getCoordinate(index);
+        }
+
+        return new Vector(tempArray);
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("{ " + rows[0]);

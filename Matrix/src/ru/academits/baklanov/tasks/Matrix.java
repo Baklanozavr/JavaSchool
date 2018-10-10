@@ -144,6 +144,34 @@ public class Matrix {
         }
     }
 
+    public static Matrix sumOf(Matrix matrix1, Matrix matrix2) {
+        Matrix tempMatrix = new Matrix(matrix1);
+        tempMatrix.plus(matrix2);
+        return tempMatrix;
+    }
+
+    public static Matrix difference(Matrix matrix1, Matrix matrix2) {
+        Matrix tempMatrix = new Matrix(matrix1);
+        tempMatrix.minus(matrix2);
+        return tempMatrix;
+    }
+
+    public static Matrix matrixMultiplication(Matrix matrix1, Matrix matrix2) {
+        if (matrix1.getSize()[1] != matrix2.getSize()[0]) {
+            throw new IllegalArgumentException("Данные матрицы нельзя перемножить!");
+        }
+
+        double[][] resultArray = new double[matrix1.getSize()[0]][matrix2.getSize()[1]];
+
+        for (int i = 0; i < matrix1.getSize()[0]; ++i) {
+            for (int j = 0; j < matrix2.getSize()[1]; ++j) {
+                resultArray[i][j] = Vector.scalarProduct(matrix1.getRow(i), matrix2.getColumn(j));
+            }
+        }
+
+        return new Matrix(resultArray);
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("{ " + rows[0]);

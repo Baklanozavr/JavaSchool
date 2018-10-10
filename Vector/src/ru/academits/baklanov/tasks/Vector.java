@@ -6,7 +6,10 @@ public class Vector {
     private double[] coordinates;
 
     public Vector(int dimension) {
-        this(dimension, new double[0]);
+        if (dimension <= 0) {
+            throw new IllegalArgumentException("Размерность вектора должна быть больше ноля!");
+        }
+        coordinates = new double[dimension];
     }
 
     public Vector(Vector vector) {

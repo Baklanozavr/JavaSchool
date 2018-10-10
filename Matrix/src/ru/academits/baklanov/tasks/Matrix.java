@@ -100,6 +100,16 @@ public class Matrix {
         }
     }
 
+    public Matrix transpose() {
+        Matrix transposedMatrix = new Matrix(this.getSize()[1], this.getSize()[0]);
+
+        for (int i = 0; i < this.getSize()[1]; ++i) {
+            transposedMatrix.setRow(i, this.getColumn(i));
+        }
+
+        return transposedMatrix;
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("{ " + rows[0]);

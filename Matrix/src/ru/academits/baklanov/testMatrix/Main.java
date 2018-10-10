@@ -37,5 +37,10 @@ public class Main {
         matrix1.setRow(0, vectors[1]);
         System.out.printf("Новая строка в матрице1: %s%n", matrix1);
         System.out.printf("Вот она: %s%n", matrix1.getRow(0));
+
+        matrix4.scalarMultiply(2);
+        System.out.printf("Скалярное умножение матрицы4 на 2: %s%n", matrix4);
+
+        System.out.printf("Транспонирование матрицы4: %s%n", matrix4.transpose());
     }
 }

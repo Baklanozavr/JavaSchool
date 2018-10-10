@@ -78,10 +78,10 @@ public class Matrix {
     }
 
     public void setRow(int index, Vector vector) {
-        if (rows[0].getSize() < vector.getSize()) {
+        if (this.getSize()[1] < vector.getSize()) {
             throw new IllegalArgumentException("Размер вектора больше размера матрицы!");
         }
-        rows[index] = Vector.sumOf(new Vector(rows[0].getSize()), vector);
+        rows[index] = Vector.sumOf(new Vector(this.getSize()[1]), vector);
     }
 
     public Vector getColumn(int index) {
@@ -92,6 +92,12 @@ public class Matrix {
         }
 
         return new Vector(tempArray);
+    }
+
+    public void scalarMultiply(double scalar) {
+        for (Vector row : rows) {
+            row.multiply(scalar);
+        }
     }
 
     @Override

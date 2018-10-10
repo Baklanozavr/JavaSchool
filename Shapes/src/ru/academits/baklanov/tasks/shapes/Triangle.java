@@ -17,7 +17,7 @@ public class Triangle implements Shape {
         this.y3 = y3;
     }
 
-    private double getSide(double x1, double y1, double x2, double y2) {
+    private static double getSide(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
@@ -34,13 +34,13 @@ public class Triangle implements Shape {
     }
 
     public double getPerimeter() {
-        return this.getSide(x1, y1, x2, y2) + this.getSide(x1, y1, x3, y3) + this.getSide(x2, y2, x3, y3);
+        return getSide(x1, y1, x2, y2) + getSide(x1, y1, x3, y3) + getSide(x2, y2, x3, y3);
     }
 
     public String toString() {
-        double a = this.getSide(x1, y1, x2, y2);
-        double b = this.getSide(x1, y1, x3, y3);
-        double c = this.getSide(x3, y3, x2, y2);
+        double a = getSide(x1, y1, x2, y2);
+        double b = getSide(x1, y1, x3, y3);
+        double c = getSide(x3, y3, x2, y2);
 
         return String.format("Triangle with sides: %s, %s, %s", a, b, c);
     }

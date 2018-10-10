@@ -58,15 +58,12 @@ public class Vector {
     }
 
     public void plus(Vector vector) {
-        Vector minVector = vector;
-
         if (coordinates.length < vector.coordinates.length) {
-            minVector = this;
-            coordinates = Arrays.copyOf(vector.coordinates, vector.coordinates.length);
+            coordinates = Arrays.copyOf(coordinates, vector.coordinates.length);
         }
 
-        for (int i = 0; i < minVector.coordinates.length; ++i) {
-            coordinates[i] += minVector.coordinates[i];
+        for (int i = 0; i < vector.coordinates.length; ++i) {
+            coordinates[i] += vector.coordinates[i];
         }
     }
 

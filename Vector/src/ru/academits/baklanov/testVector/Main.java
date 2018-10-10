@@ -33,9 +33,9 @@ public class Main {
         System.out.println(vector4);
 
         System.out.println();
-        System.out.println("вектор4 плюс вектор3 двумя способами:");
-        System.out.println(Vector.sumOf(vector4, vector3));
-        vector4.plus(vector3);
+        System.out.println("вектор4 плюс вектор2 двумя способами:");
+        System.out.println(Vector.sumOf(vector4, vector2));
+        vector4.plus(vector2);
         System.out.println(vector4);
 
         System.out.println("вектор4 минус вектор3 двумя способами:");

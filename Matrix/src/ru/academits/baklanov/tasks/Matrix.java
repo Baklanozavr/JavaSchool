@@ -128,6 +128,22 @@ public class Matrix {
         }
     }
 
+    public void minus(Matrix matrix) {
+        if (rows.length < matrix.rows.length) {
+            int delta = matrix.rows.length - rows.length;
+
+            rows = Arrays.copyOf(rows, matrix.rows.length);
+
+            for (int i = delta; i < matrix.rows.length; ++i) {
+                rows[i] = new Vector(this.getSize()[1]);
+            }
+        }
+
+        for (int i = 0; i < matrix.rows.length; ++i) {
+            rows[i].minus(matrix.rows[i]);
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("{ " + rows[0]);

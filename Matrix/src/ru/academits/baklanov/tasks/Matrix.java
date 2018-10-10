@@ -96,10 +96,24 @@ public class Matrix {
         return new Vector(tempArray);
     }
 
-    public void scalarMultiply(double scalar) {
+    public void multiplyByScalar(double scalar) {
         for (Vector row : rows) {
             row.multiply(scalar);
         }
+    }
+
+    public Vector multiplyByVector(Vector vector) {
+        if (this.getSize()[1] != vector.getSize()) {
+            throw new IllegalArgumentException("Несовпадение размерностей!");
+        }
+
+        Vector resultVector = new Vector(vector.getSize());
+
+        for (int i = 0; i < vector.getSize(); ++i) {
+            resultVector.setCoordinate(i, Vector.scalarProduct(rows[i], vector));
+        }
+
+        return resultVector;
     }
 
     public Matrix transpose() {

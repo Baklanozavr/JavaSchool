@@ -32,9 +32,7 @@ public class Vector {
             throw new IllegalArgumentException("Размерность вектора должна быть больше ноля!");
         }
 
-        this.coordinates = new double[dimension >= coordinates.length ? dimension : coordinates.length];
-
-        System.arraycopy(coordinates, 0, this.coordinates, 0, coordinates.length);
+        this.coordinates = Arrays.copyOf(coordinates, dimension);
     }
 
     public int getSize() {

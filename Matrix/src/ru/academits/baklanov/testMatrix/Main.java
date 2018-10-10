@@ -42,5 +42,8 @@ public class Main {
         System.out.printf("Скалярное умножение матрицы4 на 2: %s%n", matrix4);
 
         System.out.printf("Транспонирование матрицы4: %s%n", matrix4.transpose());
+
+        matrix1.plus(matrix4.transpose());
+        System.out.printf("Матрица1 плюс транспонированная матрица4: %s%n", matrix1);
     }
 }

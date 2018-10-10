@@ -1,5 +1,7 @@
 package ru.academits.baklanov.tasks;
 
+import java.util.Arrays;
+
 public class Matrix {
     private Vector[] rows;
 
@@ -108,6 +110,22 @@ public class Matrix {
         }
 
         return transposedMatrix;
+    }
+
+    public void plus(Matrix matrix) {
+        if (rows.length < matrix.rows.length) {
+            int delta = matrix.rows.length - rows.length;
+
+            rows = Arrays.copyOf(rows, matrix.rows.length);
+
+            for (int i = delta; i < matrix.rows.length; ++i) {
+                rows[i] = new Vector(this.getSize()[1]);
+            }
+        }
+
+        for (int i = 0; i < matrix.rows.length; ++i) {
+            rows[i].plus(matrix.rows[i]);
+        }
     }
 
     @Override

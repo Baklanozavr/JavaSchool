@@ -79,26 +79,12 @@ public class Matrix {
         }
     }
 
-    private static Vector[] getVectors(double[][] array2D) {
-        if (array2D == null) {
-            throw new IllegalArgumentException("Массив не найден! (null)");
-        }
-
-        Vector[] vectors = new Vector[array2D.length];
-
-        for (int i = 0; i < array2D.length; ++i) {
-            vectors[i] = new Vector(array2D[i]);
-        }
-
-        return vectors;
+    public int getRowsNumber() {
+        return rows.length;
     }
 
-    public int[] getSize() {
-        int[] size = new int[2];
-        size[0] = rows.length;
-        size[1] = rows[0].getSize();
-
-        return size;
+    public int getColumnsNumber() {
+        return rows[0].getSize();
     }
 
     public Vector getRow(int index) {
@@ -106,10 +92,10 @@ public class Matrix {
     }
 
     public void setRow(int index, Vector vector) {
-        if (this.getSize()[1] < vector.getSize()) {
+        if (this.getColumnsNumber() < vector.getSize()) {
             throw new IllegalArgumentException("Размер вектора больше размера матрицы!");
         }
-        rows[index] = Vector.sumOf(new Vector(this.getSize()[1]), vector);
+        rows[index] = Vector.sumOf(new Vector(this.getColumnsNumber()), vector);
     }
 
     public Vector getColumn(int index) {
@@ -129,7 +115,7 @@ public class Matrix {
     }
 
     public Vector multiplyByVector(Vector vector) {
-        if (this.getSize()[1] != vector.getSize()) {
+        if (this.getColumnsNumber() != vector.getSize()) {
             throw new IllegalArgumentException("Несовпадение размерностей!");
         }
 
@@ -143,9 +129,9 @@ public class Matrix {
     }
 
     public Matrix transpose() {
-        Matrix transposedMatrix = new Matrix(this.getSize()[1], this.getSize()[0]);
+        Matrix transposedMatrix = new Matrix(this.getColumnsNumber(), this.getRowsNumber());
 
-        for (int i = 0; i < this.getSize()[1]; ++i) {
+        for (int i = 0; i < this.getColumnsNumber(); ++i) {
             transposedMatrix.setRow(i, this.getColumn(i));
         }
 
@@ -159,7 +145,7 @@ public class Matrix {
             rows = Arrays.copyOf(rows, matrix.rows.length);
 
             for (int i = delta; i < matrix.rows.length; ++i) {
-                rows[i] = new Vector(this.getSize()[1]);
+                rows[i] = new Vector(this.getColumnsNumber());
             }
         }
 
@@ -175,7 +161,7 @@ public class Matrix {
             rows = Arrays.copyOf(rows, matrix.rows.length);
 
             for (int i = delta; i < matrix.rows.length; ++i) {
-                rows[i] = new Vector(this.getSize()[1]);
+                rows[i] = new Vector(this.getColumnsNumber());
             }
         }
 
@@ -197,14 +183,14 @@ public class Matrix {
     }
 
     public static Matrix matrixMultiplication(Matrix matrix1, Matrix matrix2) {
-        if (matrix1.getSize()[1] != matrix2.getSize()[0]) {
+        if (matrix1.getColumnsNumber() != matrix2.getRowsNumber()) {
             throw new IllegalArgumentException("Данные матрицы нельзя перемножить!");
         }
 
-        double[][] resultArray = new double[matrix1.getSize()[0]][matrix2.getSize()[1]];
+        double[][] resultArray = new double[matrix1.getRowsNumber()][matrix2.getColumnsNumber()];
 
-        for (int i = 0; i < matrix1.getSize()[0]; ++i) {
-            for (int j = 0; j < matrix2.getSize()[1]; ++j) {
+        for (int i = 0; i < matrix1.getRowsNumber(); ++i) {
+            for (int j = 0; j < matrix2.getColumnsNumber(); ++j) {
                 resultArray[i][j] = Vector.scalarProduct(matrix1.getRow(i), matrix2.getColumn(j));
             }
         }

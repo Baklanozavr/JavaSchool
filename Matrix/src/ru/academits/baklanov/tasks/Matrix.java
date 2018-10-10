@@ -6,36 +6,62 @@ public class Matrix {
     private Vector[] rows;
 
     public Matrix(int n, int m) {
-        this(new double[n][m]);
+        if (n <= 0 || m <= 0) {
+            throw new IllegalArgumentException("Размерность матрицы должна быть больше ноля!");
+        }
+
+        rows = new Vector[n];
+        for (int i = 0; i < n; ++i) {
+            rows[i] = new Vector(m);
+        }
     }
 
     public Matrix(double[][] array2D) {
-        this(getVectors(array2D));
+        if (array2D == null) {
+            throw new IllegalArgumentException("Массив не найден! (null)");
+        }
+        if (array2D.length == 0) {
+            throw new IllegalArgumentException("Размерность матрицы должна быть больше ноля!");
+        }
+
+        int maxRowLength = 0;
+        for (double[] array : array2D) {
+            if (array == null) {
+                throw new IllegalArgumentException("Вложенный массив не найден! (null)");
+            }
+            if (maxRowLength < array.length) {
+                maxRowLength = array.length;
+            }
+        }
+        if (maxRowLength == 0) {
+            throw new IllegalArgumentException("Размерность матрицы должна быть больше ноля!");
+        }
+
+        rows = new Vector[array2D.length];
+        for (int i = 0; i < array2D.length; ++i) {
+            rows[i] = new Vector(maxRowLength, array2D[i]);
+        }
     }
 
     public Matrix(Vector[] vectors) {
         if (vectors == null) {
             throw new IllegalArgumentException("Массив не найден! (null)");
         }
+        if (vectors.length == 0) {
+            throw new IllegalArgumentException("Размерность матрицы должна быть больше ноля!");
+        }
 
         int maxRowLength = 0;
-
         for (Vector vector : vectors) {
             if (vector == null) {
                 throw new IllegalArgumentException("Вектор не найден! (null)");
             }
-
             if (maxRowLength < vector.getSize()) {
                 maxRowLength = vector.getSize();
             }
         }
 
-        if (vectors.length == 0) {
-            throw new IllegalArgumentException("Размерность матрицы должна быть больше ноля!");
-        }
-
         rows = new Vector[vectors.length];
-
         for (int i = 0; i < vectors.length; ++i) {
             rows[i] = Vector.sumOf(new Vector(maxRowLength), vectors[i]);
         }

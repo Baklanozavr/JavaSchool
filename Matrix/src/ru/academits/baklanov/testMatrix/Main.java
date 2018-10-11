@@ -13,7 +13,7 @@ public class Main {
 
         double[][] testArray2D = {{1, 2}, {2, 3}, {4, 5, 0}};
 
-        double[] testArray1 = {1, 2};
+        double[] testArray1 = {1, 2, 2};
         double[] testArray2 = {5, 3, 1};
         double[] testArray3 = {0, 1, 1};
 
@@ -55,10 +55,13 @@ public class Main {
 
         testMatrix = new Matrix(matrix1);
         testMatrix.multiplyByScalar(2);
-        System.out.printf("Скалярное умножение матрицы на 2: %s%n", testMatrix);
+        System.out.printf("Скалярное умножение матрицы1 на 2: %s%n", testMatrix);
 
         testMatrix = new Matrix(matrix1);
         testMatrix.transpose();
-        System.out.printf("Транспонирование матрицы: %s%n", testMatrix);
+        System.out.printf("Транспонирование матрицы1: %s%n", testMatrix);
+
+        System.out.printf("Определитель матрицы1: %.1f%n", matrix1.getDeterminant());
+        System.out.printf("Определитель матрицы2: %.1f", matrix2.getDeterminant());
     }
 }

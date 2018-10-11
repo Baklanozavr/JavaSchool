@@ -129,13 +129,14 @@ public class Matrix {
     }
 
     public void transpose() {
-        Matrix transposedMatrix = new Matrix(this.getColumnsNumber(), this.getRowsNumber());
+        for (int i = 0; i < this.getRowsNumber(); ++i) {
+            for (int j = 0; j < this.getColumnsNumber(); ++j) {
+                double tempElement = rows[i].getCoordinate(j);
 
-        for (int i = 0; i < this.getColumnsNumber(); ++i) {
-            transposedMatrix.setRow(i, this.getColumn(i));
+                rows[i].setCoordinate(j, rows[j].getCoordinate(i));
+                rows[j].setCoordinate(i, tempElement);
+            }
         }
-
-        rows = transposedMatrix.rows;
     }
 
     public void plus(Matrix matrix) {

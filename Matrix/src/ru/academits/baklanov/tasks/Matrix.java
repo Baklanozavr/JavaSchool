@@ -1,7 +1,5 @@
 package ru.academits.baklanov.tasks;
 
-import java.util.Arrays;
-
 public class Matrix {
     private Vector[] rows;
 
@@ -141,14 +139,13 @@ public class Matrix {
     }
 
     public void transpose() {
-        for (int i = 0; i < this.getRowsNumber(); ++i) {
-            for (int j = 0; j < this.getColumnsNumber(); ++j) {
-                double tempElement = rows[i].getCoordinate(j);
+        Matrix transposedMatrix = new Matrix(this.getColumnsNumber(), this.getRowsNumber());
 
-                rows[i].setCoordinate(j, rows[j].getCoordinate(i));
-                rows[j].setCoordinate(i, tempElement);
-            }
+        for (int i = 0; i < this.getColumnsNumber(); ++i) {
+            transposedMatrix.setRow(i, this.getColumn(i));
         }
+
+        rows = transposedMatrix.rows;
     }
 
     public void plus(Matrix matrix) {

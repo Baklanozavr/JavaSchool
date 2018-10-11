@@ -125,7 +125,7 @@ public class Matrix {
     }
 
     public Vector multiplyByVector(Vector vector) {
-        if (this.getColumnsNumber() != vector.getSize()) {
+        if (this.getRowsNumber() != vector.getSize()) {
             throw new IllegalArgumentException("Несовпадение размерностей!");
         }
 

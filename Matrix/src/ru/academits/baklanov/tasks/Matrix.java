@@ -88,7 +88,7 @@ public class Matrix {
     }
 
     public Vector getRow(int index) {
-        return rows[index];
+        return new Vector(rows[index]);
     }
 
     public void setRow(int index, Vector vector) {

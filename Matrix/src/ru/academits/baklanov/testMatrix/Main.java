@@ -21,7 +21,7 @@ public class Main {
         System.out.println("Введите размерность матрицы (два целых числа):");
         Matrix matrix1 = new Matrix(scanner.nextInt(), scanner.nextInt());
         System.out.printf("Тест инициализации матрицы1 через размерность: %s%n", matrix1);
-        System.out.printf("Размер этой матрицы: %s на %s%n", matrix1.getSize()[0], matrix1.getSize()[1]);
+        System.out.printf("Размер этой матрицы: %s на %s%n", matrix1.getRowsNumber(), matrix1.getColumnsNumber());
 
         Matrix matrix2 = new Matrix(matrix1);
         System.out.printf("Тест инициализации матрицы2 через копирование матрицы 1: %s%n", matrix2);

@@ -218,7 +218,7 @@ public class Matrix {
 
         for (int i = 0; i < this.getRowsNumber(); ++i) {
             for (int j = 0; j < this.getColumnsNumber(); ++j) {
-                arrayFromMatrix[i][j] = this.getRow(i).getCoordinate(j);
+                arrayFromMatrix[i][j] = this.rows[i].getCoordinate(j);
             }
         }
 

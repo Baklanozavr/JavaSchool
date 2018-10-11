@@ -128,14 +128,14 @@ public class Matrix {
         return resultVector;
     }
 
-    public Matrix transpose() {
+    public void transpose() {
         Matrix transposedMatrix = new Matrix(this.getColumnsNumber(), this.getRowsNumber());
 
         for (int i = 0; i < this.getColumnsNumber(); ++i) {
             transposedMatrix.setRow(i, this.getColumn(i));
         }
 
-        return transposedMatrix;
+        rows = transposedMatrix.rows;
     }
 
     public void plus(Matrix matrix) {

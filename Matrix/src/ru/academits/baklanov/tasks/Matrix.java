@@ -152,14 +152,8 @@ public class Matrix {
     }
 
     public void plus(Matrix matrix) {
-        if (rows.length < matrix.rows.length) {
-            int delta = matrix.rows.length - rows.length;
-
-            rows = Arrays.copyOf(rows, matrix.rows.length);
-
-            for (int i = delta; i < matrix.rows.length; ++i) {
-                rows[i] = new Vector(this.getColumnsNumber());
-            }
+        if (matrix.getRowsNumber() != this.getRowsNumber() || matrix.getColumnsNumber() != this.getColumnsNumber()) {
+            throw new IllegalArgumentException("Несовпадение размерностей!");
         }
 
         for (int i = 0; i < matrix.rows.length; ++i) {
@@ -168,14 +162,8 @@ public class Matrix {
     }
 
     public void minus(Matrix matrix) {
-        if (rows.length < matrix.rows.length) {
-            int delta = matrix.rows.length - rows.length;
-
-            rows = Arrays.copyOf(rows, matrix.rows.length);
-
-            for (int i = delta; i < matrix.rows.length; ++i) {
-                rows[i] = new Vector(this.getColumnsNumber());
-            }
+        if (matrix.getRowsNumber() != this.getRowsNumber() || matrix.getColumnsNumber() != this.getColumnsNumber()) {
+            throw new IllegalArgumentException("Несовпадение размерностей!");
         }
 
         for (int i = 0; i < matrix.rows.length; ++i) {
@@ -184,12 +172,20 @@ public class Matrix {
     }
 
     public static Matrix sumOf(Matrix matrix1, Matrix matrix2) {
+        if (matrix1.getRowsNumber() != matrix2.getRowsNumber() || matrix1.getColumnsNumber() != matrix2.getColumnsNumber()) {
+            throw new IllegalArgumentException("Несовпадение размерностей!");
+        }
+
         Matrix tempMatrix = new Matrix(matrix1);
         tempMatrix.plus(matrix2);
         return tempMatrix;
     }
 
     public static Matrix difference(Matrix matrix1, Matrix matrix2) {
+        if (matrix1.getRowsNumber() != matrix2.getRowsNumber() || matrix1.getColumnsNumber() != matrix2.getColumnsNumber()) {
+            throw new IllegalArgumentException("Несовпадение размерностей!");
+        }
+
         Matrix tempMatrix = new Matrix(matrix1);
         tempMatrix.minus(matrix2);
         return tempMatrix;
@@ -197,7 +193,7 @@ public class Matrix {
 
     public static Matrix matrixMultiplication(Matrix matrix1, Matrix matrix2) {
         if (matrix1.getColumnsNumber() != matrix2.getRowsNumber()) {
-            throw new IllegalArgumentException("Данные матрицы нельзя перемножить!");
+            throw new IllegalArgumentException("Данные матрицы нельзя перемножить - неподходящие размерности!");
         }
 
         double[][] resultArray = new double[matrix1.getRowsNumber()][matrix2.getColumnsNumber()];

@@ -197,7 +197,7 @@ public class Matrix {
 
         for (int i = 0; i < matrix1.getRowsNumber(); ++i) {
             for (int j = 0; j < matrix2.getColumnsNumber(); ++j) {
-                resultArray[i][j] = Vector.scalarProduct(matrix1.getRow(i), matrix2.getColumn(j));
+                resultArray[i][j] = Vector.scalarProduct(matrix1.rows[i], matrix2.getColumn(j));
             }
         }
 

@@ -9,8 +9,6 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        Matrix testMatrix;
-
         double[][] testArray2D = {{1, 2}, {2, 3}, {4, 5, 0}};
 
         double[] testArray1 = {1, 2, 2};
@@ -32,6 +30,8 @@ public class Main {
 
         Matrix matrix2 = new Matrix(vectors);
         System.out.printf("Тест инициализации матрицы2 через массив векторов: %s%n", matrix2);
+
+        Matrix testMatrix;
 
         testMatrix = new Matrix(matrix1);
         testMatrix.plus(matrix2);

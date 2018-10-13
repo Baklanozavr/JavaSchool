@@ -155,11 +155,11 @@ public class Matrix {
     }
 
     public Vector multiplyByVector(Vector vector) {
-        if (this.getRowsNumber() != vector.getSize()) {
+        if (this.getColumnsNumber() != vector.getSize()) {
             throw new IllegalArgumentException("Несовпадение размерностей!");
         }
 
-        Vector resultVector = new Vector(vector.getSize());
+        Vector resultVector = new Vector(this.getRowsNumber());
 
         for (int i = 0; i < vector.getSize(); ++i) {
             resultVector.setCoordinate(i, Vector.scalarProduct(rows[i], vector));

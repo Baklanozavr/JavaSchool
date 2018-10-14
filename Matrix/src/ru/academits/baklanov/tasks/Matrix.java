@@ -87,7 +87,7 @@ public class Matrix {
 
     public Vector getColumn(int index) {
         if (index >= this.getColumnsNumber() || index < 0) {
-            throw new IllegalArgumentException("Выход за размерность матрицы!");
+            throw new IndexOutOfBoundsException("Выход за размерность матрицы!");
         }
 
         double[] tempArray = new double[rows.length];
@@ -101,7 +101,7 @@ public class Matrix {
 
     public Vector getRow(int index) {
         if (index >= this.getRowsNumber() || index < 0) {
-            throw new IllegalArgumentException("Выход за размерность матрицы!");
+            throw new IndexOutOfBoundsException("Выход за размерность матрицы!");
         }
 
         return new Vector(rows[index]);
@@ -109,7 +109,7 @@ public class Matrix {
 
     public void setRow(int index, Vector vector) {
         if (index >= this.getRowsNumber() || index < 0) {
-            throw new IllegalArgumentException("Выход за размерность матрицы!");
+            throw new IndexOutOfBoundsException("Выход за размерность матрицы!");
         }
         if (this.getColumnsNumber() < vector.getSize()) {
             throw new IllegalArgumentException("Размер вектора больше размера матрицы!");

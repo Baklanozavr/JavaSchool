@@ -119,13 +119,13 @@ public class Matrix {
     }
 
     public void transpose() {
-        Matrix transposedMatrix = new Matrix(this.getColumnsNumber(), this.getRowsNumber());
+        Vector[] transposedMatrixRows = new Vector[this.getColumnsNumber()];
 
         for (int i = 0; i < this.getColumnsNumber(); ++i) {
-            transposedMatrix.setRow(i, this.getColumn(i));
+            transposedMatrixRows[i] = new Vector(this.getColumn(i));
         }
 
-        rows = transposedMatrix.rows;
+        rows = transposedMatrixRows;
     }
 
     public void plus(Matrix matrix) {

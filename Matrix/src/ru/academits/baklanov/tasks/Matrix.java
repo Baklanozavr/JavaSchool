@@ -111,11 +111,11 @@ public class Matrix {
         if (index >= this.getRowsNumber() || index < 0) {
             throw new IndexOutOfBoundsException("Выход за размерность матрицы!");
         }
-        if (this.getColumnsNumber() < vector.getSize()) {
-            throw new IllegalArgumentException("Размер вектора больше размера матрицы!");
+        if (this.getColumnsNumber() != vector.getSize()) {
+            throw new IllegalArgumentException("Размер вектора не совпадает с размером строки матрицы!");
         }
 
-        rows[index] = Vector.sumOf(new Vector(this.getColumnsNumber()), vector);
+        rows[index] = new Vector(vector);
     }
 
     public void transpose() {

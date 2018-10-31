@@ -122,7 +122,7 @@ public class Matrix {
         Vector[] transposedMatrixRows = new Vector[this.getColumnsNumber()];
 
         for (int i = 0; i < this.getColumnsNumber(); ++i) {
-            transposedMatrixRows[i] = new Vector(this.getColumn(i));
+            transposedMatrixRows[i] = this.getColumn(i);
         }
 
         rows = transposedMatrixRows;

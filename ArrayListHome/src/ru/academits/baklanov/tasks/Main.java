@@ -2,12 +2,13 @@ package ru.academits.baklanov.tasks;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        try (Scanner scanner = new Scanner(new FileInputStream("Strings.txt"), "UTF-8")) {
+        try (Scanner scanner = new Scanner(new FileInputStream("Strings.txt"), StandardCharsets.UTF_8)) {
             ArrayList<String> stringsFromFile = new ArrayList<>();
 
             while (scanner.hasNextLine()) {

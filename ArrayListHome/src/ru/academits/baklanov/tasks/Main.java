@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
         try (Scanner scanner = new Scanner(new FileInputStream("Strings.txt"), StandardCharsets.UTF_8)) {
             ArrayList<String> stringsFromFile = new ArrayList<>();
 
@@ -18,6 +18,9 @@ public class Main {
             for (String s : stringsFromFile) {
                 System.out.println(s);
             }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         int sizeOfTestList = 15;

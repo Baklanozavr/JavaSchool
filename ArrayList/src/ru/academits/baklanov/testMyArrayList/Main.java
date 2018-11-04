@@ -26,6 +26,8 @@ public class Main {
 
         testList.set(0, "33");
 
+        testList.remove("000");
+
         for (String s : testList) {
             System.out.println(s);
         }

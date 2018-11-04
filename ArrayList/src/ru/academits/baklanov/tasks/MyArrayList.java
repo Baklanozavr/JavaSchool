@@ -269,7 +269,7 @@ public class MyArrayList<E> implements List<E> {
 
         checkCapacity();
 
-        System.arraycopy(items, index, items, index + 1, length - 1 - index);
+        System.arraycopy(items, index, items, index + 1, length - index);
         items[index] = element;
         ++length;
     }

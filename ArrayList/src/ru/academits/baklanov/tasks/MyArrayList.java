@@ -166,7 +166,7 @@ public class MyArrayList<E> implements List<E> {
 
         ensureCapacity(length + c.size());
 
-        System.arraycopy(items, index, items, index + c.size(), length - 1 - index);
+        System.arraycopy(items, index, items, index + c.size(), length - index);
 
         Iterator<? extends E> outerIterator = c.iterator();
 

@@ -286,7 +286,7 @@ public class MyArrayList<E> implements List<E> {
 
         E element = get(index);
 
-        System.arraycopy(items, index + 1, items, index, length - index);
+        System.arraycopy(items, index + 1, items, index, length - 1 - index);
         --length;
 
         return element;

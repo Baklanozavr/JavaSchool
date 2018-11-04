@@ -166,7 +166,7 @@ public class MyArrayList<E> implements List<E> {
 
         ensureCapacity(length + c.size());
 
-        System.arraycopy(items, index, items, index + c.size(), length - index);
+        System.arraycopy(items, index, items, index + c.size(), length - 1 - index);
 
         Iterator<? extends E> outerIterator = c.iterator();
 
@@ -269,7 +269,7 @@ public class MyArrayList<E> implements List<E> {
 
         checkCapacity();
 
-        System.arraycopy(items, index, items, index + 1, length - index);
+        System.arraycopy(items, index, items, index + 1, length - 1 - index);
         items[index] = element;
         ++length;
     }

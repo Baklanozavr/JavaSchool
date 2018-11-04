@@ -24,10 +24,15 @@ public class Main {
 
         System.out.println(testList.remove(2));
 
+        testList.set(0, "33");
+
         for (String s : testList) {
             System.out.println(s);
         }
 
+        System.out.println(testList.size());
+
+        testList.clear();
         System.out.println(testList.size());
     }
 }

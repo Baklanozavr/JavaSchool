@@ -19,8 +19,7 @@ public class Main {
                 System.out.println(s);
             }
         } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            System.out.println("Файл не найден!");
         }
 
         int sizeOfTestList = 15;

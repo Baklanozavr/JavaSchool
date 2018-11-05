@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 public class MyArrayListIterator<T> implements Iterator<T> {
     private int index;
-    private MyArrayList myArrayList;
+    private MyArrayList<T> myArrayList;
 
     public MyArrayListIterator(MyArrayList<T> myArrayList) {
         if (myArrayList == null) {
@@ -30,6 +30,6 @@ public class MyArrayListIterator<T> implements Iterator<T> {
             throw new IndexOutOfBoundsException("Следующего элемента нет!");
         }
 
-        return (T) myArrayList.get(index);
+        return myArrayList.get(index);
     }
 }

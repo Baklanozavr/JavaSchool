@@ -8,8 +8,9 @@ public class Main {
         MyArrayList<String> testList2 = new MyArrayList<>();
 
         if (testList2.isEmpty()) {
-            testList2.add("test");
-            testList2.add("7");
+            testList2.add("123");
+            testList2.add("123");
+            testList2.add("45");
         }
 
         testList.ensureCapacity(20);
@@ -22,27 +23,12 @@ public class Main {
         for (String s : testList) {
             System.out.println(s);
         }
+        System.out.println();
 
-        System.out.println(testList.remove(2));
-
-        testList.addAll(1, testList2);
-
-        for (String s : testList) {
-            System.out.println(s);
+        if (testList.containsAll(testList2)) {
+            for (String s : testList) {
+                System.out.println(999);
+            }
         }
-
-        testList.set(0, "33");
-
-        testList.remove("000");
-
-        for (String s : testList) {
-            System.out.println(s);
-        }
-
-        System.out.println(testList.size());
-
-        testList.clear();
-
-        System.out.println(testList.size());
     }
 }

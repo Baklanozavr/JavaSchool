@@ -25,9 +25,10 @@ public class Main {
         }
         System.out.println();
 
+        //TODO надо исправить метод toArray
         if (testList.containsAll(testList2)) {
-            for (String s : testList) {
-                System.out.println(999);
+            for (String s : testList.toArray()) {
+                System.out.println(s);
             }
         }
     }

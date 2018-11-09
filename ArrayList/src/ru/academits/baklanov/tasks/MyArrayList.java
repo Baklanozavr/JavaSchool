@@ -178,7 +178,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public boolean containsAll(Collection<?> c) {
         if (c == null) {
-            throw new IllegalArgumentException("Коллекция не найдена! (null)");
+            throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
         Iterator<?> outerIterator = c.iterator();
@@ -197,7 +197,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public boolean addAll(Collection<? extends E> c) {
         if (c == null) {
-            throw new IllegalArgumentException("Коллекция не найдена! (null)");
+            throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
         ensureCapacity(length + c.size());
@@ -219,10 +219,10 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
         if (c == null) {
-            throw new IllegalArgumentException("Коллекция не найдена! (null)");
+            throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
-        if (index >= length || index < 0) {
+        if (index > length || index < 0) {
             throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
@@ -247,7 +247,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public boolean removeAll(Collection<?> c) {
         if (c == null) {
-            throw new IllegalArgumentException("Коллекция не найдена! (null)");
+            throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
         for (int i = 0; i < length; ) {
@@ -264,7 +264,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public boolean retainAll(Collection<?> c) {
         if (c == null) {
-            throw new IllegalArgumentException("Коллекция не найдена! (null)");
+            throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
         for (int i = 0; i < length; ) {

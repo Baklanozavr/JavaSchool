@@ -40,12 +40,8 @@ public class MyArrayList<E> implements List<E> {
         }
     }
 
-    public void trimToSize(int capacity) {
-        if (capacity < 0) {
-            throw new IllegalArgumentException("Значение не может быть отрицательным!");
-        }
-
-        items = Arrays.copyOf(items, capacity);
+    public void trimToSize() {
+        items = Arrays.copyOf(items, length);
     }
 
     @Override
@@ -240,11 +236,9 @@ public class MyArrayList<E> implements List<E> {
         if (index < 0) {
             throw new IllegalArgumentException("Индекс не может быть отрицательным!");
         }
-
         if (index >= length) {
             throw new IndexOutOfBoundsException("Индекс за границей списка!");
         }
-
         if (element == null) {
             throw new IllegalArgumentException("Объект для установки не найден! (null)");
         }

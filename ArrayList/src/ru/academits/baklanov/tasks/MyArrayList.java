@@ -161,7 +161,7 @@ public class MyArrayList<E> implements List<E> {
         }
 
         if (index >= length) {
-            throw new IllegalArgumentException("Индекс за границей списка!");
+            throw new IndexOutOfBoundsException("Индекс за границей списка!");
         }
 
         ensureCapacity(length + c.size());
@@ -229,7 +229,7 @@ public class MyArrayList<E> implements List<E> {
         }
 
         if (index >= length) {
-            throw new IllegalArgumentException("Индекс за границей списка!");
+            throw new IndexOutOfBoundsException("Индекс за границей списка!");
         }
 
         return items[index];
@@ -242,7 +242,7 @@ public class MyArrayList<E> implements List<E> {
         }
 
         if (index >= length) {
-            throw new IllegalArgumentException("Индекс за границей списка!");
+            throw new IndexOutOfBoundsException("Индекс за границей списка!");
         }
 
         if (element == null) {
@@ -261,7 +261,7 @@ public class MyArrayList<E> implements List<E> {
         }
 
         if (index >= length) {
-            throw new IllegalArgumentException("Индекс за границей списка!");
+            throw new IndexOutOfBoundsException("Индекс за границей списка!");
         }
 
         if (element == null) {
@@ -282,7 +282,7 @@ public class MyArrayList<E> implements List<E> {
         }
 
         if (index >= length) {
-            throw new IllegalArgumentException("Индекс за границей списка!");
+            throw new IndexOutOfBoundsException("Индекс за границей списка!");
         }
 
         E element = get(index);
@@ -323,16 +323,19 @@ public class MyArrayList<E> implements List<E> {
         return -1;
     }
 
+    /** @noinspection ConstantConditions*/
     @Override //реализация не обязательна
     public ListIterator<E> listIterator() {
         return null;
     }
 
+    /** @noinspection ConstantConditions*/
     @Override //реализация не обязательна
     public ListIterator<E> listIterator(int index) {
         return null;
     }
 
+    /** @noinspection ConstantConditions*/
     @Override //реализация не обязательна
     public List<E> subList(int fromIndex, int toIndex) {
         return null;

@@ -229,9 +229,13 @@ public class MyArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
+        ensureCapacity(length + 1);
+
+        items[length + 1] = items[index];
+
         items[index] = element;
 
-        return element;
+        return items[length + 1];
     }
 
     @Override

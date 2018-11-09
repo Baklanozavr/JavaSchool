@@ -13,21 +13,20 @@ public class Main {
             testList2.add("45");
         }
 
-        testList.ensureCapacity(20);
-        testList.trimToSize(4);
-
         testList.add("123");
         testList.add("123");
         testList.add("123");
         testList.add("45");
         testList.add(1, "000");
 
+        System.out.println(testList.set(0, "5"));
+        System.out.println();
+
         for (String s : testList) {
             System.out.println(s);
         }
-        System.out.println();
 
-        //TODO надо исправить метод toArray
+        /*
         if (testList.containsAll(testList2)) {
             for (String s : testList) {
                 System.out.println(s);
@@ -39,5 +38,6 @@ public class Main {
         for (String s : testList) {
             System.out.println(s);
         }
+        */
     }
 }

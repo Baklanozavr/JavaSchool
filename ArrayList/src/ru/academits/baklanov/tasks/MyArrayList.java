@@ -181,12 +181,10 @@ public class MyArrayList<E> implements List<E> {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
-        Iterator<?> outerIterator = c.iterator();
-
         int counter = 0;
 
-        while (outerIterator.hasNext()) {
-            if (contains(outerIterator.next())) {
+        for (Object element : c) {
+            if (contains(element)) {
                 ++counter;
             }
         }
@@ -202,12 +200,10 @@ public class MyArrayList<E> implements List<E> {
 
         ensureCapacity(length + c.size());
 
-        Iterator<? extends E> outerIterator = c.iterator();
-
         int counter = 0;
 
-        while (outerIterator.hasNext()) {
-            items[length + counter] = outerIterator.next();
+        for (E element : c) {
+            items[length + counter] = element;
             ++counter;
         }
 
@@ -230,12 +226,10 @@ public class MyArrayList<E> implements List<E> {
 
         System.arraycopy(items, index, items, index + c.size(), length - index);
 
-        Iterator<? extends E> outerIterator = c.iterator();
-
         int counter = 0;
 
-        while (outerIterator.hasNext()) {
-            items[index + counter] = outerIterator.next();
+        for (E element : c) {
+            items[index + counter] = element;
             ++counter;
         }
 

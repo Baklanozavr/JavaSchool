@@ -17,6 +17,8 @@ public class Main {
         testList.trimToSize(4);
 
         testList.add("123");
+        testList.add("123");
+        testList.add("123");
         testList.add("45");
         testList.add(1, "000");
 
@@ -27,9 +29,15 @@ public class Main {
 
         //TODO надо исправить метод toArray
         if (testList.containsAll(testList2)) {
-            for (String s : testList.toArray()) {
+            for (String s : testList) {
                 System.out.println(s);
             }
+        }
+        System.out.println();
+
+        testList.removeAll(testList2);
+        for (String s : testList) {
+            System.out.println(s);
         }
     }
 }

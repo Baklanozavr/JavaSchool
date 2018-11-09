@@ -191,8 +191,9 @@ public class MyArrayList<E> implements List<E> {
         for (int i = 0; i < length; ) {
             if (c.contains(items[i])) {
                 remove(i);
+            } else {
+                ++i;
             }
-            ++i;
         }
 
         return true;

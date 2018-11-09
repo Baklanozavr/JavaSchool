@@ -143,13 +143,11 @@ public class MyArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
-        checkCapacity();
-
-        items[length + 1] = items[index];
+        E previousElement = items[index];
 
         items[index] = element;
 
-        return items[length + 1];
+        return previousElement;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class MyArrayList<E> implements List<E> {
     private void checkCapacity() {
         int capacityMultiplier = 2;
 
-        if (length + 1 == items.length) {
+        if (length == items.length) {
             items = Arrays.copyOf(items, length * capacityMultiplier);
         }
     }

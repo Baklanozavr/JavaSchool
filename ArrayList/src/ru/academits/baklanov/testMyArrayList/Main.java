@@ -20,6 +20,7 @@ public class Main {
         testList.add("123");
         testList.add("45");
         testList.add(1, "000");
+        testList.add(5, "000");
 
         testList.trimToSize();
 

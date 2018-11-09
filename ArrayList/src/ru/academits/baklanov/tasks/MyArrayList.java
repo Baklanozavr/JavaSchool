@@ -1,7 +1,5 @@
 package ru.academits.baklanov.tasks;
 
-import ru.academits.baklanov.tasks.iterators.MyArrayListIterator;
-
 import java.util.*;
 
 public class MyArrayList<E> implements List<E> {
@@ -50,6 +48,12 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
+    public void clear() {
+        length = 0;
+        Arrays.fill(items, null);
+    }
+
+    @Override
     public boolean isEmpty() {
         return length == 0;
     }
@@ -60,8 +64,25 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
-    public Iterator<E> iterator() {
-        return new MyArrayListIterator<>(this);
+    public int indexOf(Object o) {
+        for (int i = 0; i < length; ++i) {
+            if (items[i] == null ? o == null : items[i].equals(o)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        for (int i = length - 1; i >= 0; --i) {
+            if (items[i] == null ? o == null : items[i].equals(o)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     @Override
@@ -92,6 +113,57 @@ public class MyArrayList<E> implements List<E> {
         ++length;
 
         return true;
+    }
+
+    @Override
+    public void add(int index, E element) {
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
+
+        checkCapacity();
+
+        System.arraycopy(items, index, items, index + 1, length - index);
+        items[index] = element;
+        ++length;
+    }
+
+    @Override
+    public E get(int index) {
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
+
+        return items[index];
+    }
+
+    @Override
+    public E set(int index, E element) {
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
+
+        ensureCapacity(length + 1);
+
+        items[length + 1] = items[index];
+
+        items[index] = element;
+
+        return items[length + 1];
+    }
+
+    @Override
+    public E remove(int index) {
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
+
+        E element = get(index);
+
+        System.arraycopy(items, index + 1, items, index, length - 1 - index);
+        --length;
+
+        return element;
     }
 
     @Override
@@ -209,82 +281,8 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
-    public void clear() {
-        length = 0;
-        Arrays.fill(items, null);
-    }
-
-    @Override
-    public E get(int index) {
-        if (index >= length || index < 0) {
-            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
-        }
-
-        return items[index];
-    }
-
-    @Override
-    public E set(int index, E element) {
-        if (index >= length || index < 0) {
-            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
-        }
-
-        ensureCapacity(length + 1);
-
-        items[length + 1] = items[index];
-
-        items[index] = element;
-
-        return items[length + 1];
-    }
-
-    @Override
-    public void add(int index, E element) {
-        if (index >= length || index < 0) {
-            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
-        }
-
-        checkCapacity();
-
-        System.arraycopy(items, index, items, index + 1, length - index);
-        items[index] = element;
-        ++length;
-    }
-
-    @Override
-    public E remove(int index) {
-        if (index >= length || index < 0) {
-            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
-        }
-
-        E element = get(index);
-
-        System.arraycopy(items, index + 1, items, index, length - 1 - index);
-        --length;
-
-        return element;
-    }
-
-    @Override
-    public int indexOf(Object o) {
-        for (int i = 0; i < length; ++i) {
-            if (items[i] == null ? o == null : items[i].equals(o)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    @Override
-    public int lastIndexOf(Object o) {
-        for (int i = length - 1; i >= 0; --i) {
-            if (items[i] == null ? o == null : items[i].equals(o)) {
-                return i;
-            }
-        }
-
-        return -1;
+    public Iterator<E> iterator() {
+        return new MyArrayListIterator<>(this);
     }
 
     /**
@@ -309,5 +307,35 @@ public class MyArrayList<E> implements List<E> {
     @Override //реализация не обязательна
     public List<E> subList(int fromIndex, int toIndex) {
         return null;
+    }
+
+    class MyArrayListIterator<T> implements Iterator<T> {
+        private int index;
+        private MyArrayList<T> myArrayListCopy;
+
+        MyArrayListIterator(MyArrayList<T> myArrayList) {
+            if (myArrayList == null) {
+                throw new IllegalArgumentException("Список не найден! (null)");
+            }
+
+            index = -1;
+            this.myArrayListCopy = myArrayList;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < myArrayListCopy.size() - 1;
+        }
+
+        @Override
+        public T next() {
+            ++index;
+
+            if (index > myArrayListCopy.size()) {
+                throw new IndexOutOfBoundsException("Следующего элемента нет!");
+            }
+
+            return myArrayListCopy.get(index);
+        }
     }
 }

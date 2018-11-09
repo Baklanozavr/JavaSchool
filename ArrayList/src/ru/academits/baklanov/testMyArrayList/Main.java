@@ -8,6 +8,8 @@ public class Main {
         MyArrayList<String> testList2 = new MyArrayList<>();
 
         if (testList2.isEmpty()) {
+            testList2.ensureCapacity(13);
+
             testList2.add("123");
             testList2.add("123");
             testList2.add("45");
@@ -18,6 +20,8 @@ public class Main {
         testList.add("123");
         testList.add("45");
         testList.add(1, "000");
+
+        testList.trimToSize();
 
         System.out.println(testList.set(0, "5"));
         System.out.println();

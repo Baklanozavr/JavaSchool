@@ -152,12 +152,8 @@ public class MyArrayList<E> implements List<E> {
             throw new IllegalArgumentException("Коллекция не найдена! (null)");
         }
 
-        if (index < 0) {
-            throw new IllegalArgumentException("Индекс не может быть отрицательным!");
-        }
-
-        if (index >= length) {
-            throw new IndexOutOfBoundsException("Индекс за границей списка!");
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
         ensureCapacity(length + c.size());
@@ -220,12 +216,8 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index < 0) {
-            throw new IllegalArgumentException("Индекс не может быть отрицательным!");
-        }
-
-        if (index >= length) {
-            throw new IndexOutOfBoundsException("Индекс за границей списка!");
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
         return items[index];
@@ -233,14 +225,8 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        if (index < 0) {
-            throw new IllegalArgumentException("Индекс не может быть отрицательным!");
-        }
-        if (index >= length) {
-            throw new IndexOutOfBoundsException("Индекс за границей списка!");
-        }
-        if (element == null) {
-            throw new IllegalArgumentException("Объект для установки не найден! (null)");
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
         items[index] = element;
@@ -250,16 +236,8 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        if (index < 0) {
-            throw new IllegalArgumentException("Индекс не может быть отрицательным!");
-        }
-
-        if (index >= length) {
-            throw new IndexOutOfBoundsException("Индекс за границей списка!");
-        }
-
-        if (element == null) {
-            throw new IllegalArgumentException("Объект для вставки не найден! (null)");
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
         checkCapacity();
@@ -271,12 +249,8 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        if (index < 0) {
-            throw new IllegalArgumentException("Индекс не может быть отрицательным!");
-        }
-
-        if (index >= length) {
-            throw new IndexOutOfBoundsException("Индекс за границей списка!");
+        if (index >= length || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
         E element = get(index);

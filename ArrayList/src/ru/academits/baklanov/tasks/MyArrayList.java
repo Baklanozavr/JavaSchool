@@ -280,7 +280,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new MyArrayListIterator<>(this);
+        return new MyArrayListIterator();
     }
 
     /**
@@ -307,33 +307,36 @@ public class MyArrayList<E> implements List<E> {
         return null;
     }
 
-    class MyArrayListIterator<T> implements Iterator<T> {
+    class MyArrayListIterator implements Iterator<E> {
         private int index;
-        private MyArrayList<T> myArrayListCopy;
+        private MyArrayList<E> myArrayListCopy;
 
-        MyArrayListIterator(MyArrayList<T> myArrayList) {
-            if (myArrayList == null) {
-                throw new IllegalArgumentException("Список не найден! (null)");
-            }
-
+        MyArrayListIterator() {
             index = -1;
-            this.myArrayListCopy = myArrayList;
+
+            myArrayListCopy = new MyArrayList<>();
+
+            myArrayListCopy.addAll(MyArrayList.this);
         }
 
         @Override
         public boolean hasNext() {
-            return index < myArrayListCopy.size() - 1;
+            return index < length - 1;
         }
 
         @Override
-        public T next() {
+        public E next() {
             ++index;
 
-            if (index > myArrayListCopy.size()) {
-                throw new IndexOutOfBoundsException("Следующего элемента нет!");
+            if (index == length) {
+                throw new NoSuchElementException("Следующего элемента нет!");
             }
 
-            return myArrayListCopy.get(index);
+            if (!items[index].equals(myArrayListCopy.get(index))) {
+                throw new ConcurrentModificationException("Произошло изменение коллекции!");
+            }
+
+            return items[index];
         }
     }
 }

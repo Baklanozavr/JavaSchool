@@ -289,12 +289,8 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(Object o) {
-        if (o == null) {
-            throw new IllegalArgumentException("Объект для поиска не найден! (null)");
-        }
-
         for (int i = 0; i < length; ++i) {
-            if (items[i].equals(o)) {
+            if (items[i] == null ? o == null : items[i].equals(o)) {
                 return i;
             }
         }
@@ -304,12 +300,8 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public int lastIndexOf(Object o) {
-        if (o == null) {
-            throw new IllegalArgumentException("Объект для поиска не найден! (null)");
-        }
-
         for (int i = length - 1; i >= 0; --i) {
-            if (items[i].equals(o)) {
+            if (items[i] == null ? o == null : items[i].equals(o)) {
                 return i;
             }
         }
@@ -317,19 +309,25 @@ public class MyArrayList<E> implements List<E> {
         return -1;
     }
 
-    /** @noinspection ConstantConditions*/
+    /**
+     * @noinspection ConstantConditions
+     */
     @Override //реализация не обязательна
     public ListIterator<E> listIterator() {
         return null;
     }
 
-    /** @noinspection ConstantConditions*/
+    /**
+     * @noinspection ConstantConditions
+     */
     @Override //реализация не обязательна
     public ListIterator<E> listIterator(int index) {
         return null;
     }
 
-    /** @noinspection ConstantConditions*/
+    /**
+     * @noinspection ConstantConditions
+     */
     @Override //реализация не обязательна
     public List<E> subList(int fromIndex, int toIndex) {
         return null;

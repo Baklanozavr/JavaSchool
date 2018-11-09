@@ -23,7 +23,7 @@ public class MyArrayList<E> implements List<E> {
     private void checkCapacity() {
         int capacityMultiplier = 2;
 
-        if (length == items.length) {
+        if (length + 1 == items.length) {
             items = Arrays.copyOf(items, length * capacityMultiplier);
         }
     }
@@ -117,7 +117,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public void add(int index, E element) {
-        if (index >= length || index < 0) {
+        if (index > length || index < 0) {
             throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
@@ -143,7 +143,7 @@ public class MyArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
-        ensureCapacity(length + 1);
+        checkCapacity();
 
         items[length + 1] = items[index];
 

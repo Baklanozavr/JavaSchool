@@ -86,7 +86,7 @@ public class MyArrayList<E> implements List<E> {
     }
 
     @Override
-    public E[] toArray() {
+    public Object[] toArray() {
         return Arrays.copyOf(items, length);
     }
 
@@ -97,10 +97,15 @@ public class MyArrayList<E> implements List<E> {
         }
 
         if (array.length < length) {
-            throw new IllegalArgumentException("Недостаточный размер массива!");
-        }
+            //noinspection unchecked
+            array = (T[]) Arrays.copyOf(items, array.length, array.getClass());
+        } else {
+            System.arraycopy(items, 0, array, 0, length);
 
-        array = (T[]) Arrays.copyOf(items, array.length);
+            if (array.length > length) {
+                array[length] = null;
+            }
+        }
 
         return array;
     }
@@ -303,14 +308,11 @@ public class MyArrayList<E> implements List<E> {
 
     class MyArrayListIterator implements Iterator<E> {
         private int index;
-        private MyArrayList<E> myArrayListCopy;
+        private int originalHash;
 
         MyArrayListIterator() {
             index = -1;
-
-            myArrayListCopy = new MyArrayList<>();
-
-            myArrayListCopy.addAll(MyArrayList.this);
+            originalHash = Arrays.hashCode(items);
         }
 
         @Override
@@ -326,7 +328,7 @@ public class MyArrayList<E> implements List<E> {
                 throw new NoSuchElementException("Следующего элемента нет!");
             }
 
-            if (!items[index].equals(myArrayListCopy.get(index))) {
+            if (Arrays.hashCode(items) != originalHash) {
                 throw new ConcurrentModificationException("Произошло изменение коллекции!");
             }
 

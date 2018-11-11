@@ -5,6 +5,7 @@ import java.util.*;
 public class MyArrayList<E> implements List<E> {
     private E[] items;
     private int length;
+    private int modCounter;
 
     public MyArrayList() {
         this(8);
@@ -18,6 +19,7 @@ public class MyArrayList<E> implements List<E> {
         //noinspection unchecked
         items = (E[]) new Object[capacity];
         length = 0;
+        modCounter = 0;
     }
 
     private void checkCapacity() {
@@ -50,6 +52,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public void clear() {
         length = 0;
+        ++modCounter;
         Arrays.fill(items, null);
     }
 
@@ -116,6 +119,7 @@ public class MyArrayList<E> implements List<E> {
 
         items[length] = e;
         ++length;
+        ++modCounter;
 
         return true;
     }
@@ -131,6 +135,7 @@ public class MyArrayList<E> implements List<E> {
         System.arraycopy(items, index, items, index + 1, length - index);
         items[index] = element;
         ++length;
+        ++modCounter;
     }
 
     @Override
@@ -165,6 +170,7 @@ public class MyArrayList<E> implements List<E> {
 
         System.arraycopy(items, index + 1, items, index, length - 1 - index);
         --length;
+        ++modCounter;
 
         return element;
     }
@@ -213,6 +219,7 @@ public class MyArrayList<E> implements List<E> {
         }
 
         length = length + c.size();
+        ++modCounter;
 
         return true;
     }
@@ -239,6 +246,7 @@ public class MyArrayList<E> implements List<E> {
         }
 
         length = length + c.size();
+        ++modCounter;
 
         return true;
     }
@@ -306,7 +314,7 @@ public class MyArrayList<E> implements List<E> {
         return null;
     }
 
-    class MyArrayListIterator implements Iterator<E> {
+    private class MyArrayListIterator implements Iterator<E> {
         private int index;
         private int originalHash;
 

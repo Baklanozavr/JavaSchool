@@ -101,7 +101,7 @@ public class MyArrayList<E> implements List<E> {
 
         if (array.length < length) {
             //noinspection unchecked
-            array = (T[]) Arrays.copyOf(items, array.length, array.getClass());
+            array = (T[]) Arrays.copyOf(items, length, array.getClass());
         } else {
             System.arraycopy(items, 0, array, 0, length);
 
@@ -316,11 +316,11 @@ public class MyArrayList<E> implements List<E> {
 
     private class MyArrayListIterator implements Iterator<E> {
         private int index;
-        private int originalHash;
+        private int currentModCount;
 
         MyArrayListIterator() {
             index = -1;
-            originalHash = Arrays.hashCode(items);
+            currentModCount = modCounter;
         }
 
         @Override
@@ -336,7 +336,7 @@ public class MyArrayList<E> implements List<E> {
                 throw new NoSuchElementException("Следующего элемента нет!");
             }
 
-            if (Arrays.hashCode(items) != originalHash) {
+            if (currentModCount != modCounter) {
                 throw new ConcurrentModificationException("Произошло изменение коллекции!");
             }
 

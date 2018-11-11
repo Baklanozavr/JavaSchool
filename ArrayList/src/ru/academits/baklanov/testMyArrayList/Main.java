@@ -39,7 +39,7 @@ public class Main {
         System.out.println();
 
         testList.removeAll(testList2);
-        String[] strings = new String[10];
+        String[] strings = new String[2];
         for (String s : testList.toArray(strings)) {
             System.out.println(s);
         }

@@ -1,86 +1,178 @@
 package ru.academits.baklanov.tasks;
 
+import java.util.NoSuchElementException;
+
 public class MySingleLinkedList<E> {
     private MyListItem<E> head;
     private int size;
+
+    public MySingleLinkedList() {
+        head = null;
+        size = 0;
+    }
 
     public int size() {
         return size;
     }
 
     public E getFirst() {
+        if (size == 0) {
+            throw new NoSuchElementException("This list is empty!");
+        }
+
         return head.getData();
     }
 
-    private MyListItem<E> getItem(int index) {
-        MyListItem<E> tempItem = new MyListItem<>();
-
-        for (int i = 0; i < index; ++i) {
-            tempItem = head.getNext();
+    public E get(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
 
-        return tempItem;
-    }
-
-    public E get(int index) {
         return getItem(index).getData();
     }
 
     public E set(int index, E element) {
-        MyListItem<E> tempItem = getItem(index).getCopy();
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
 
-        getItem(index).setData(element);
+        MyListItem<E> currentItem = getItem(index);
+        MyListItem<E> tempItem = currentItem.getCopy();
+
+        currentItem.setData(element);
 
         return tempItem.getData();
     }
 
     public E remove(int index) {
-        MyListItem<E> tempItem = getItem(index).getCopy();
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
 
-        getItem(index - 1).setNext(getItem(index + 1));
+        MyListItem<E> tempItem;
 
+        if (index == 0) {
+            tempItem = head;
+            head = head.getNext();
+        } else {
+            MyListItem<E> prevItem = getItem(index - 1);
+
+            tempItem = prevItem.getNext();
+            prevItem.setNext(tempItem.getNext());
+        }
+
+        --size;
         return tempItem.getData();
     }
 
     public void addFirst(E element) {
-        head = new MyListItem<> (element, head);
+        head = new MyListItem<>(element, head);
+        ++size;
     }
 
     public void add(int index, E element) {
-        MyListItem<E> tempItem = new MyListItem<> (element, head);
-        getItem(index).setNext(getItem(index));
-        getItem(index).setData(element);
+        if (index > size || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
+
+        if (index == 0) {
+            head = new MyListItem<>(element, head);
+        } else {
+            MyListItem<E> prevItem = getItem(index - 1);
+            prevItem.setNext(new MyListItem<>(element, prevItem.getNext()));
+        }
+        ++size;
     }
 
     public boolean remove(Object o) {
+        MyListItem<E> tempItem = head;
+        MyListItem<E> prevItem = null;
+
+        for (int i = 0; i < size; ++i) {
+            if (tempItem.getData() == null ? o == null : tempItem.getData().equals(o)) {
+                if (i == 0) {
+                    head = head.getNext();
+                } else {
+                    prevItem.setNext(tempItem.getNext());
+                }
+                --size;
+                return true;
+            }
+
+            prevItem = tempItem;
+            tempItem = tempItem.getNext();
+        }
+
         return false;
     }
 
-    public int indexOf(Object o) {
-        return 0;
+    public E removeFirst() {
+        if (size == 0) {
+            throw new NoSuchElementException("This list is empty!");
+        }
+
+        MyListItem<E> tempItem = head;
+
+        head = head.getNext();
+        --size;
+
+        return tempItem.getData();
     }
 
-    public int lastIndexOf(Object o) {
-        return 0;
+    public void reverse() {
+        MyListItem<E> temp = head;
+        MyListItem<E> next;
+        head = null;
+
+        while (temp != null) {
+            next = temp.getNext();
+            temp.setNext(head);
+            head = temp;
+            temp = next;
+        }
     }
 
-    public boolean contains(Object o) {
-        return false;
+    public void copyOf(MySingleLinkedList<E> mySingleLinkedList) {
+        clear();
+
+        int i = 0;
+        for (MyListItem<E> p = mySingleLinkedList.head; p != null; p = p.getNext(), ++i) {
+            add(i, p.getData());
+        }
+    }
+
+    public void clear() {
+        head = null;
+        size = 0;
+    }
+
+    public void print() {
+        if (size == 0) {
+            System.out.println("This list is empty!");
+        }
+
+        for (MyListItem<E> p = head; p != null; p = p.getNext()) {
+            System.out.println(p.getData());
+        }
+    }
+
+    private MyListItem<E> getItem(int index) {
+        if (index > size || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс неправильный!");
+        }
+
+        MyListItem<E> tempItem = head;
+
+        for (int i = 0; i < index; ++i) {
+            tempItem = tempItem.getNext();
+        }
+
+        return tempItem;
     }
 
     class MyListItem<T> {
         private T data;
         private MyListItem<T> next;
-
-        MyListItem() {
-            data = null;
-            next = null;
-        }
-
-        MyListItem(T data) {
-            this.data = data;
-            next = null;
-        }
 
         MyListItem(T data, MyListItem<T> next) {
             this.data = data;
@@ -104,7 +196,7 @@ public class MySingleLinkedList<E> {
         }
 
         MyListItem<T> getCopy() {
-            return new MyListItem<T>(data, next);
+            return new MyListItem<>(data, next);
         }
     }
 }

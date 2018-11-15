@@ -4,14 +4,52 @@ import ru.academits.baklanov.tasks.MyArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        MyArrayList<String> testList = new MyArrayList<>(10);
+        MyArrayList<String> testList = new MyArrayList<>(3);
         MyArrayList<String> testList2 = new MyArrayList<>();
 
+        int index = 1;
+
+        testList.add("111");
+        testList.add("222");
+        testList.add("333");
+
+        testList2.add("aaa");
+        testList2.add("bbb");
+
+        System.out.printf("Первый список размером %s%n", testList.size());
+        testList.print();
+        System.out.println();
+
+        System.out.printf("Второй список размером %s%n", testList2.size());
+        testList2.print();
+        System.out.println();
+/*
+        System.out.println("Добавляем в конец первого списка второй список:");
+        testList.addAll(testList2);
+        testList.print();
+        System.out.println();
+
+        System.out.println("Очистили второй список");
+        testList2.clear();
+        testList2.print();
+        System.out.println();
+        testList.print();
+*/
+        System.out.printf("Делаем вставку второго списка в первый по индексу %s%n", index);
+        testList.addAll(index, testList2);
+        System.out.printf("Теперь первый список размером %s%n", testList.size());
+        testList.print();
+
+
+
+
+
+        /*
         if (testList2.isEmpty()) {
             testList2.ensureCapacity(13);
 
-            testList2.add("123");
-            testList2.add("45");
+            testList2.add("999");
+            testList2.add("666");
         }
 
         testList.add("123");
@@ -26,15 +64,20 @@ public class Main {
         System.out.println(testList.set(0, "5"));
         System.out.println();
 
-        for (String s : testList) {
-            System.out.println(s);
-        }
+        testList.addAll(testList2);
+        testList.print();
+        System.out.println();
+
+        testList2.set(0, "777");
+        testList.addAll(testList2);
+        testList.print();
+        System.out.println();
+
+        testList.print();
         System.out.println();
 
         if (testList.containsAll(testList2)) {
-            for (String s : testList) {
-                System.out.println(s);
-            }
+            testList.print();
         }
         System.out.println();
 
@@ -42,6 +85,6 @@ public class Main {
         String[] strings = new String[2];
         for (String s : testList.toArray(strings)) {
             System.out.println(s);
-        }
+        }*/
     }
 }

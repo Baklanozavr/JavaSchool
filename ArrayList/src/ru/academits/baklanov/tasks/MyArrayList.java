@@ -212,14 +212,14 @@ public class MyArrayList<E> implements List<E> {
 
         ensureCapacity(length + c.size());
 
-        int counter = 0;
+        int innerIndex = length;
 
         for (E element : c) {
-            items[length + counter] = element;
-            ++counter;
+            items[innerIndex] = element;
+            ++innerIndex;
         }
 
-        length = length + c.size();
+        length += c.size();
         ++modCounter;
 
         return true;
@@ -239,14 +239,14 @@ public class MyArrayList<E> implements List<E> {
 
         System.arraycopy(items, index, items, index + c.size(), length - index);
 
-        int counter = 0;
+        int innerIndex = index;
 
         for (E element : c) {
-            items[index + counter] = element;
-            ++counter;
+            items[innerIndex] = element;
+            ++innerIndex;
         }
 
-        length = length + c.size();
+        length += c.size();
         ++modCounter;
 
         return true;
@@ -289,6 +289,16 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public Iterator<E> iterator() {
         return new MyArrayListIterator();
+    }
+
+    public void print() {
+        if (length == 0) {
+            System.out.println("This list is empty!");
+        }
+
+        for (int i = 0; i < length; ++i) {
+            System.out.println(items[i]);
+        }
     }
 
     /**

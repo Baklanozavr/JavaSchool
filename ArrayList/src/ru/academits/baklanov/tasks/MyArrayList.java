@@ -41,7 +41,9 @@ public class MyArrayList<E> implements List<E> {
     }
 
     public void trimToSize() {
-        items = Arrays.copyOf(items, length);
+        if (items.length != length) {
+            items = Arrays.copyOf(items, length);
+        }
     }
 
     @Override
@@ -103,6 +105,7 @@ public class MyArrayList<E> implements List<E> {
             //noinspection unchecked
             array = (T[]) Arrays.copyOf(items, length, array.getClass());
         } else {
+            //noinspection SuspiciousSystemArraycopy
             System.arraycopy(items, 0, array, 0, length);
 
             if (array.length > length) {

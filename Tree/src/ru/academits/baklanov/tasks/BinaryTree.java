@@ -25,25 +25,29 @@ public class BinaryTree<E extends Integer> {
     public void add(E element) {
         if (root == null) {
             root = new TreeNode<>(element);
+            ++size;
+            return;
         }
 
-        for (TreeNode<E> node = root; node != null; ) {
+        for (TreeNode<E> node = root; ; ) {
             if (comparator.compare(element, node.data) < 0) {
                 if (node.left != null) {
                     node = node.left;
                 } else {
                     node.left = new TreeNode<>(element);
+                    ++size;
+                    return;
                 }
             } else {
                 if (node.right != null) {
                     node = node.right;
                 } else {
                     node.right = new TreeNode<>(element);
+                    ++size;
+                    return;
                 }
             }
         }
-
-        ++size;
     }
 
     public TreeNode<E> findNode(E sample) {
@@ -143,6 +147,34 @@ public class BinaryTree<E extends Integer> {
 
         --size;
         return true;
+    }
+
+    public void printTree() {
+        if (root == null) {
+            throw new NoSuchElementException("This tree is empty!");
+        }
+
+        printNode(0, root);
+    }
+
+    private void printNode(int i, TreeNode<E> node) {
+        StringBuilder s = new StringBuilder();
+        for (int j = 0; j < i; j++){
+            s.append(" ");
+        }
+
+        System.out.printf("%s%s%n", s.toString(), node.data);
+        ++i;
+
+        if (node.left != null) {
+            System.out.print("-1 ");
+            printNode(i, node.left);
+        }
+
+        if (node.right != null) {
+            System.out.print("+1");
+            printNode(i, node.right);
+        }
     }
 
     private class TreeComparator implements Comparator<E> {

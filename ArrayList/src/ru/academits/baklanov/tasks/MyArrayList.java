@@ -210,6 +210,10 @@ public class MyArrayList<E> implements List<E> {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
+        if (c.size() == 0) {
+            return false;
+        }
+
         ensureCapacity(length + c.size());
 
         int innerIndex = length;
@@ -233,6 +237,10 @@ public class MyArrayList<E> implements List<E> {
 
         if (index > length || index < 0) {
             throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
+
+        if (c.size() == 0) {
+            return false;
         }
 
         ensureCapacity(length + c.size());

@@ -266,6 +266,8 @@ public class MyArrayList<E> implements List<E> {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
+        int initialModCount = modCounter;
+
         for (int i = 0; i < length; ) {
             if (c.contains(items[i])) {
                 remove(i);
@@ -274,7 +276,7 @@ public class MyArrayList<E> implements List<E> {
             }
         }
 
-        return true;
+        return initialModCount != modCounter;
     }
 
     @Override
@@ -282,6 +284,8 @@ public class MyArrayList<E> implements List<E> {
         if (Objects.equals(c, null)) {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
+
+        int initialModCount = modCounter;
 
         for (int i = 0; i < length; ) {
             if (c.contains(items[i])) {
@@ -291,7 +295,7 @@ public class MyArrayList<E> implements List<E> {
             remove(i);
         }
 
-        return true;
+        return initialModCount != modCounter;
     }
 
     @Override

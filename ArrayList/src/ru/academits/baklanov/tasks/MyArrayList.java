@@ -333,16 +333,15 @@ public class MyArrayList<E> implements List<E> {
 
         @Override
         public E next() {
-            ++index;
-
-            if (index == length) {
-                throw new NoSuchElementException("Следующего элемента нет!");
-            }
-
             if (currentModCount != modCounter) {
                 throw new ConcurrentModificationException("Произошло изменение коллекции!");
             }
 
+            if (index == length - 1) {
+                throw new NoSuchElementException("Следующего элемента нет!");
+            }
+
+            ++index;
             return items[index];
         }
     }

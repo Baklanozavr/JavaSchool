@@ -195,15 +195,13 @@ public class MyArrayList<E> implements List<E> {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
-        int counter = 0;
-
         for (Object element : c) {
-            if (contains(element)) {
-                ++counter;
+            if (!contains(element)) {
+                return false;
             }
         }
 
-        return counter == c.size();
+        return true;
     }
 
     @Override

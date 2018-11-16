@@ -17,20 +17,20 @@ public class MySingleLinkedList<E> {
     }
 
     public E getFirst() {
-        checkVoid();
+        throwIfEmpty();
 
         return head.getData();
     }
 
     public E get(int index) {
-        checkVoid();
+        throwIfEmpty();
         checkIndex(index);
 
         return getItem(index).getData();
     }
 
     public E set(int index, E element) {
-        checkVoid();
+        throwIfEmpty();
         checkIndex(index);
 
         MyListItem<E> currentItem = getItem(index);
@@ -41,7 +41,6 @@ public class MySingleLinkedList<E> {
     }
 
     public E remove(int index) {
-        checkVoid();
         checkIndex(index);
 
         MyListItem<E> tempItem;
@@ -102,7 +101,7 @@ public class MySingleLinkedList<E> {
     }
 
     public E removeFirst() {
-        checkVoid();
+        throwIfEmpty();
 
         MyListItem<E> tempItem = head;
 
@@ -129,11 +128,11 @@ public class MySingleLinkedList<E> {
         MySingleLinkedList<E> blankList = new MySingleLinkedList<>();
 
         if (head != null) {
-            MyListItem<E> temp = head.getCopy();
+            MyListItem<E> temp = new MyListItem<>(head.getData(), null);
             blankList.head = temp;
 
             for (MyListItem<E> runner = head.getNext(); runner != null; runner = runner.getNext()) {
-                temp.setNext(runner.getCopy());
+                temp.setNext(new MyListItem<>(runner.getData(), null));
                 temp = temp.getNext();
             }
 
@@ -148,14 +147,19 @@ public class MySingleLinkedList<E> {
         size = 0;
     }
 
-    public void print() {
+    @Override
+    public String toString() {
         if (size == 0) {
-            System.out.println("This list is empty!");
+            return "This list is empty!";
         }
 
+        StringBuilder bufferString = new StringBuilder();
+
         for (MyListItem<E> p = head; p != null; p = p.getNext()) {
-            System.out.println(p.getData());
+            bufferString.append(p.getData().toString()).append(System.lineSeparator());
         }
+        
+        return bufferString.toString();
     }
 
     private void checkIndex(int index) {
@@ -164,7 +168,7 @@ public class MySingleLinkedList<E> {
         }
     }
 
-    private void checkVoid() {
+    private void throwIfEmpty() {
         if (size == 0) {
             throw new NoSuchElementException("This list is empty!");
         }
@@ -203,10 +207,6 @@ public class MySingleLinkedList<E> {
 
         void setNext(MyListItem<T> next) {
             this.next = next;
-        }
-
-        MyListItem<T> getCopy() {
-            return new MyListItem<>(data, next);
         }
     }
 }

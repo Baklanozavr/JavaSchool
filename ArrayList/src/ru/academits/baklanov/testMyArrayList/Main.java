@@ -15,12 +15,10 @@ public class Main {
         testList2.add("bbb");
 
         System.out.printf("Первый список размером %s%n", testList.size());
-        testList.print();
-        System.out.println();
+        System.out.println(testList);
 
         System.out.printf("Второй список размером %s%n", testList2.size());
-        testList2.print();
-        System.out.println();
+        System.out.println(testList2);
 
         if (testList2.isEmpty()) {
             testList2.ensureCapacity(13);
@@ -38,16 +36,11 @@ public class Main {
 
         testList2.set(0, "777");
         testList.addAll(testList2);
-        testList.print();
-        System.out.println();
-
-        testList.print();
-        System.out.println();
+        System.out.println(testList);
 
         if (testList.containsAll(testList2)) {
-            testList.print();
+            System.out.println(testList);
         }
-        System.out.println();
 
         testList2.clear();
 

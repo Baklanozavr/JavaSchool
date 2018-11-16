@@ -14,8 +14,7 @@ public class Main {
 
         MySingleLinkedList<String> testListCopy = testList.copy();
 
-        testListCopy.print();
-        System.out.println();
+        System.out.println(testListCopy);
 
         int index = 4;
         String string = "000";
@@ -24,39 +23,32 @@ public class Main {
         System.out.printf("Элемент с индексом %s: %s%n", index, testList.set(index, string));
         System.out.printf("Заменён на элемент %s: %s%n", string, testList.get(index));
         System.out.printf("Количество элементов: %s%n", testList.size());
-        testList.print();
-        System.out.println();
+        System.out.println(testList);
 
         System.out.printf("Теперь элемента %s по индексу %s нет%n", testList.remove(index), index);
-        testList.print();
-        System.out.println();
+        System.out.println(testList);
 
         testList.add(index, string);
         System.out.printf("Вернули элемент %s обратно по индексу %s%n", string, index);
-        testList.print();
-        System.out.println();
+        System.out.println(testList);
 
         if (testList.remove(string)) {
             System.out.printf("Снова удалили элемент %s%n", string);
-            testList.print();
-            System.out.println();
+            System.out.println(testList);
         }
 
         System.out.printf("Удалили первый элемент: %s%n", testList.removeFirst());
-        testList.print();
-        System.out.println();
+        System.out.println(testList);
 
         System.out.println("Развернём список:");
         testList.reverse();
-        testList.print();
-        System.out.println();
+        System.out.println(testList);
 
         System.out.println("Начальная копия списка");
-        testListCopy.print();
-        System.out.println();
+        System.out.println(testListCopy);
 
         System.out.println("Удалим её");
         testListCopy.clear();
-        testListCopy.print();
+        System.out.println(testListCopy);
     }
 }

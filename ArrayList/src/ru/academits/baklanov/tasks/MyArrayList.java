@@ -234,11 +234,9 @@ public class MyArrayList<E> implements List<E> {
         if (c == null) {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
-
         if (index > length || index < 0) {
             throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
         }
-
         if (c.size() == 0) {
             return false;
         }
@@ -303,14 +301,19 @@ public class MyArrayList<E> implements List<E> {
         return new MyArrayListIterator();
     }
 
-    public void print() {
+    @Override
+    public String toString() {
         if (length == 0) {
-            System.out.println("This list is empty!");
+            return "This list is empty!";
         }
 
+        StringBuilder bufferString = new StringBuilder();
+
         for (int i = 0; i < length; ++i) {
-            System.out.println(items[i]);
+            bufferString.append(items[i].toString()).append(System.lineSeparator());
         }
+
+        return bufferString.toString();
     }
 
     /**

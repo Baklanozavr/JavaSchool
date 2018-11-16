@@ -71,7 +71,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < length; ++i) {
-            if (Objects.equals(items[i], null) ? Objects.equals(o, null) : items[i].equals(o)) {
+            if (Objects.equals(items[i], o)) {
                 return i;
             }
         }
@@ -82,7 +82,7 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = length - 1; i >= 0; --i) {
-            if (Objects.equals(items[i], null) ? Objects.equals(o, null) : items[i].equals(o)) {
+            if (Objects.equals(items[i], o)) {
                 return i;
             }
         }
@@ -97,7 +97,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public <T> T[] toArray(T[] array) {
-        if (Objects.equals(array, null)) {
+        if (array == null) {
             throw new IllegalArgumentException("Массив не найден! (null)");
         }
 
@@ -191,7 +191,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        if (Objects.equals(c, null)) {
+        if (c == null) {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
@@ -206,7 +206,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        if (Objects.equals(c, null)) {
+        if (c == null) {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
@@ -231,7 +231,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (Objects.equals(c, null)) {
+        if (c == null) {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
@@ -262,7 +262,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        if (Objects.equals(c, null)) {
+        if (c == null) {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 
@@ -281,7 +281,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        if (Objects.equals(c, null)) {
+        if (c == null) {
             throw new NullPointerException("Коллекция не найдена! (null)");
         }
 

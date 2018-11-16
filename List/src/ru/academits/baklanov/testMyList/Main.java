@@ -17,7 +17,7 @@ public class Main {
         testListCopy.print();
         System.out.println();
 
-        int index = 0;
+        int index = 4;
         String string = "000";
 
         System.out.printf("Первый элемент: %s%n", testList.getFirst());

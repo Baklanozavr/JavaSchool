@@ -132,13 +132,21 @@ public class MySingleLinkedList<E> {
         }
     }
 
-    public void copyOf(MySingleLinkedList<E> mySingleLinkedList) {
-        clear();
+    public MySingleLinkedList<E> copy() {
+        MySingleLinkedList<E> blankList = new MySingleLinkedList<>();
 
-        int i = 0;
-        for (MyListItem<E> p = mySingleLinkedList.head; p != null; p = p.getNext(), ++i) {
-            add(i, p.getData());
+        MyListItem<E> temp = head.getCopy();
+        blankList.head = temp;
+
+        for (MyListItem<E> runner = head.getNext(), next; runner !=null; runner = runner.getNext()) {
+            next = runner.getCopy();
+            temp.setNext(next);
+            temp = temp.getNext();
         }
+
+        blankList.size = size;
+
+        return blankList;
     }
 
     public void clear() {
@@ -157,10 +165,6 @@ public class MySingleLinkedList<E> {
     }
 
     private MyListItem<E> getItem(int index) {
-        if (index > size || index < 0) {
-            throw new IndexOutOfBoundsException("Индекс неправильный!");
-        }
-
         MyListItem<E> tempItem = head;
 
         for (int i = 0; i < index; ++i) {

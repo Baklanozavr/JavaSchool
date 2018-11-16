@@ -12,13 +12,12 @@ public class Main {
         testList.addFirst("222");
         testList.addFirst("111");
 
-        MySingleLinkedList<String> testListCopy = new MySingleLinkedList<>();
-        testListCopy.copyOf(testList);
+        MySingleLinkedList<String> testListCopy = testList.copy();
 
         testListCopy.print();
         System.out.println();
 
-        int index = 4;
+        int index = 2;
         String string = "000";
 
         System.out.printf("Первый элемент: %s%n", testList.getFirst());

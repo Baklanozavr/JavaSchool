@@ -14,6 +14,12 @@ public class BinaryTree<E extends Integer> {
         size = 0;
     }
 
+    private enum Direction {
+        LEFT, RIGHT
+    }
+
+
+
     public E getRoot() {
         return root.data;
     }
@@ -29,7 +35,9 @@ public class BinaryTree<E extends Integer> {
             return;
         }
 
-        for (TreeNode<E> node = root; ; ) {
+        TreeNode<E> node = root;
+
+        while (true) {
             if (comparator.compare(element, node.data) < 0) {
                 if (node.left != null) {
                     node = node.left;
@@ -167,7 +175,7 @@ public class BinaryTree<E extends Integer> {
         ++i;
 
         if (node.left != null) {
-            System.out.print("-1 ");
+            System.out.print("-1");
             printNode(i, node.left);
         }
 

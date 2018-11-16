@@ -266,11 +266,9 @@ public class MyArrayList<E> implements List<E> {
 
         int initialModCount = modCounter;
 
-        for (int i = 0; i < length; ) {
-            if (c.contains(items[i])) {
+        for (int i = 0; i < length; ++i) {
+            while (c.contains(items[i])) {
                 remove(i);
-            } else {
-                ++i;
             }
         }
 
@@ -285,12 +283,10 @@ public class MyArrayList<E> implements List<E> {
 
         int initialModCount = modCounter;
 
-        for (int i = 0; i < length; ) {
-            if (c.contains(items[i])) {
-                ++i;
-                continue;
+        for (int i = 0; i < length; ++i) {
+            while (!c.contains(items[i])) {
+                remove(i);
             }
-            remove(i);
         }
 
         return initialModCount != modCounter;

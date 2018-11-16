@@ -1,6 +1,7 @@
 package ru.academits.baklanov.tasks;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class MySingleLinkedList<E> {
     private MyListItem<E> head;
@@ -83,7 +84,7 @@ public class MySingleLinkedList<E> {
         MyListItem<E> prevItem = null;
 
         for (int i = 0; i < size; ++i) {
-            if (tempItem.getData() == null ? o == null : tempItem.getData().equals(o)) {
+            if (Objects.equals(tempItem.getData(), o)) {
                 if (i == 0) {
                     head = head.getNext();
                 } else {
@@ -131,9 +132,8 @@ public class MySingleLinkedList<E> {
             MyListItem<E> temp = head.getCopy();
             blankList.head = temp;
 
-            for (MyListItem<E> runner = head.getNext(), next; runner != null; runner = runner.getNext()) {
-                next = runner.getCopy();
-                temp.setNext(next);
+            for (MyListItem<E> runner = head.getNext(); runner != null; runner = runner.getNext()) {
+                temp.setNext(runner.getCopy());
                 temp = temp.getNext();
             }
 

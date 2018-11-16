@@ -16,38 +16,32 @@ public class MySingleLinkedList<E> {
     }
 
     public E getFirst() {
-        if (size == 0) {
-            throw new NoSuchElementException("This list is empty!");
-        }
+        checkVoid();
 
         return head.getData();
     }
 
     public E get(int index) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
-        }
+        checkVoid();
+        checkIndex(index);
 
         return getItem(index).getData();
     }
 
     public E set(int index, E element) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
-        }
+        checkVoid();
+        checkIndex(index);
 
         MyListItem<E> currentItem = getItem(index);
-        MyListItem<E> tempItem = currentItem.getCopy();
-
+        E tempItem = currentItem.getData();
         currentItem.setData(element);
 
-        return tempItem.getData();
+        return tempItem;
     }
 
     public E remove(int index) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
-        }
+        checkVoid();
+        checkIndex(index);
 
         MyListItem<E> tempItem;
 
@@ -107,9 +101,7 @@ public class MySingleLinkedList<E> {
     }
 
     public E removeFirst() {
-        if (size == 0) {
-            throw new NoSuchElementException("This list is empty!");
-        }
+        checkVoid();
 
         MyListItem<E> tempItem = head;
 
@@ -135,16 +127,18 @@ public class MySingleLinkedList<E> {
     public MySingleLinkedList<E> copy() {
         MySingleLinkedList<E> blankList = new MySingleLinkedList<>();
 
-        MyListItem<E> temp = head.getCopy();
-        blankList.head = temp;
+        if (head != null) {
+            MyListItem<E> temp = head.getCopy();
+            blankList.head = temp;
 
-        for (MyListItem<E> runner = head.getNext(), next; runner !=null; runner = runner.getNext()) {
-            next = runner.getCopy();
-            temp.setNext(next);
-            temp = temp.getNext();
+            for (MyListItem<E> runner = head.getNext(), next; runner != null; runner = runner.getNext()) {
+                next = runner.getCopy();
+                temp.setNext(next);
+                temp = temp.getNext();
+            }
+
+            blankList.size = size;
         }
-
-        blankList.size = size;
 
         return blankList;
     }
@@ -161,6 +155,18 @@ public class MySingleLinkedList<E> {
 
         for (MyListItem<E> p = head; p != null; p = p.getNext()) {
             System.out.println(p.getData());
+        }
+    }
+
+    private void checkIndex(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Индекс за пределами допустимого диапазона!");
+        }
+    }
+
+    private void checkVoid() {
+        if (size == 0) {
+            throw new NoSuchElementException("This list is empty!");
         }
     }
 

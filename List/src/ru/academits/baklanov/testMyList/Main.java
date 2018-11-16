@@ -17,7 +17,7 @@ public class Main {
         testListCopy.print();
         System.out.println();
 
-        int index = 2;
+        int index = 0;
         String string = "000";
 
         System.out.printf("Первый элемент: %s%n", testList.getFirst());
@@ -38,9 +38,9 @@ public class Main {
 
         if (testList.remove(string)) {
             System.out.printf("Снова удалили элемент %s%n", string);
+            testList.print();
+            System.out.println();
         }
-        testList.print();
-        System.out.println();
 
         System.out.printf("Удалили первый элемент: %s%n", testList.removeFirst());
         testList.print();

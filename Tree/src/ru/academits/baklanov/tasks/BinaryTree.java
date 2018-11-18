@@ -1,6 +1,8 @@
 package ru.academits.baklanov.tasks;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 public class BinaryTree<E extends Integer> {
@@ -75,7 +77,6 @@ public class BinaryTree<E extends Integer> {
         }
     }
 
-
     public E getRoot() {
         return root.data;
     }
@@ -123,6 +124,27 @@ public class BinaryTree<E extends Integer> {
         return null;
     }
 
+    private TreeNode<E> deleteChild(TreeNode<E> parent, Direction direction) {
+        if (parent == null) {
+            throw new NullPointerException("Узел не найден!");
+        }
+
+        TreeNode<E> child = parent.getNext(direction);
+
+        if (child == null) {
+            throw new IllegalArgumentException("У данного узла нет детей!");
+        }
+        if (child.left != null && child.right != null) {
+            throw new IllegalArgumentException("У данного узла больше одного внука!");
+        }
+
+        TreeNode<E> grandChild = child.left == null ? child.right : child.left;
+
+        parent.setNext(grandChild, direction);
+
+        return child;
+    }
+
     public boolean remove(E element) {
         if (root == null) {
             throw new NoSuchElementException("This tree is empty!");
@@ -147,14 +169,8 @@ public class BinaryTree<E extends Integer> {
             return false;
         }
 
-        if (node.left == null && node.right == null) {
-            if (parent == null) {
-                root = null;
-            } else {
-                parent.setNext(null, direction);
-            }
-        } else if (node.left == null || node.right == null) {
-            TreeNode<E> child = node.left == null ? node.right : node.left;;
+        if (node.left == null || node.right == null) {
+            TreeNode<E> child = node.left == null ? node.right : node.left;
 
             if (parent == null) {
                 root = child;
@@ -163,27 +179,19 @@ public class BinaryTree<E extends Integer> {
             }
         } else {
             TreeNode<E> parentMinChild = node.right;
-            TreeNode<E> minChild = parentMinChild.left;
 
-            if (minChild == null) {
-                minChild = parentMinChild;
-                node.right = minChild.right;
-            } else {
-                while (minChild.left != null) {
-                    parentMinChild = minChild;
-                    minChild = minChild.left;
+            while (parentMinChild.left != null) {
+                if (parentMinChild.left.left != null) {
+                    parentMinChild = parentMinChild.left;
                 }
-
-                parentMinChild.left = minChild.right;
             }
 
-            minChild.left = node.left;
-            minChild.right = node.right;
+            node = deleteChild(parentMinChild, Direction.LEFT);
 
             if (parent == null) {
-                root = minChild;
+                root = node;
             } else {
-                parent.setNext(minChild, direction);
+                parent.setNext(node, direction);
             }
         }
 
@@ -196,26 +204,79 @@ public class BinaryTree<E extends Integer> {
             throw new NoSuchElementException("This tree is empty!");
         }
 
-        printNode(0, root);
+        int treeDepth = countDepth();
+        int leftGap = 8;
+        int mainGap = 8;
+        int levelCounter = 1;
+        int elementPerLevelCounter = 0;
+        int nextLevelElementsCounter = 0;
+
+        String formatString = "%" + mainGap + "s";
+        String formatNewString = "%n%" + leftGap + "s";
+
+        LinkedList<TreeNode<E>> queue = new LinkedList<>();
+
+        queue.addLast(root);
+        ++elementPerLevelCounter;
+
+        while (queue.size() > 0) {
+            TreeNode<E> node = queue.pop();
+            --elementPerLevelCounter;
+
+            System.out.printf(formatString, node.data);
+
+            if (node.left != null) {
+                queue.addLast(node.left);
+                ++nextLevelElementsCounter;
+            }
+            if (node.right != null) {
+                queue.addLast(node.right);
+                ++nextLevelElementsCounter;
+            }
+
+            if (elementPerLevelCounter == 0) {
+                System.out.printf(formatNewString, " ");
+                ++levelCounter;
+                elementPerLevelCounter = nextLevelElementsCounter;
+                nextLevelElementsCounter = 0;
+            }
+        }
     }
 
-    private void printNode(int i, TreeNode<E> node) {
-        StringBuilder s = new StringBuilder();
-        for (int j = 0; j < i; j++) {
-            s.append(" ");
+    private int countDepth() {
+        if (root == null) {
+            return 0;
         }
 
-        System.out.printf("%s%s%n", s.toString(), node.data);
-        ++i;
+        int levelCounter = 1;
+        int elementPerLevelCounter = 0;
+        int nextLevelElementsCounter = 0;
 
-        if (node.left != null) {
-            System.out.print("-1");
-            printNode(i, node.left);
+        LinkedList<TreeNode<E>> queue = new LinkedList<>();
+
+        queue.addLast(root);
+        ++elementPerLevelCounter;
+
+        while (queue.size() > 0) {
+            TreeNode<E> node = queue.pop();
+            --elementPerLevelCounter;
+
+            if (node.left != null) {
+                queue.addLast(node.left);
+                ++nextLevelElementsCounter;
+            }
+            if (node.right != null) {
+                queue.addLast(node.right);
+                ++nextLevelElementsCounter;
+            }
+
+            if (elementPerLevelCounter == 0) {
+                ++levelCounter;
+                elementPerLevelCounter = nextLevelElementsCounter;
+                nextLevelElementsCounter = 0;
+            }
         }
 
-        if (node.right != null) {
-            System.out.print("+1");
-            printNode(i, node.right);
-        }
+        return levelCounter;
     }
 }

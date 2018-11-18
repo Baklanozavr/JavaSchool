@@ -41,6 +41,7 @@ public class MySingleLinkedList<E> {
     }
 
     public E remove(int index) {
+        throwIfEmpty();
         checkIndex(index);
 
         MyListItem<E> tempItem;
@@ -154,11 +155,18 @@ public class MySingleLinkedList<E> {
         }
 
         StringBuilder bufferString = new StringBuilder();
+        bufferString.append('[');
 
         for (MyListItem<E> p = head; p != null; p = p.getNext()) {
-            bufferString.append(p.getData().toString()).append(System.lineSeparator());
+            if (p.getData() == null) {
+                bufferString.append("null, ");
+            } else {
+                bufferString.append(p.getData().toString()).append(", ");
+            }
         }
-        
+
+        bufferString.replace(bufferString.length() - 2, bufferString.length(), "]");
+
         return bufferString.toString();
     }
 

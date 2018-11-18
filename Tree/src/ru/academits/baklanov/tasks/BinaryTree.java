@@ -14,10 +14,66 @@ public class BinaryTree<E extends Integer> {
         size = 0;
     }
 
-    private enum Direction {
-        LEFT, RIGHT
+    private class TreeComparator implements Comparator<E> {
+        @Override
+        public int compare(E n1, E n2) {
+            return Integer.compare(n1, n2);
+        }
     }
 
+    private class TreeNode<T> {
+        private T data;
+        private TreeNode<T> left;
+        private TreeNode<T> right;
+
+        TreeNode(T data) {
+            this.data = data;
+            left = null;
+            right = null;
+        }
+
+        TreeNode<T> getNext(Direction where) {
+            if (where == Direction.LEFT) {
+                return left;
+            }
+            return right;
+        }
+
+        TreeNode<T> getNext(int key) {
+            if (key < 0) {
+                return left;
+            }
+            return right;
+        }
+
+        void addNext(T element, Direction direction) {
+            if (direction == Direction.LEFT) {
+                left = new TreeNode<>(element);
+            } else {
+                right = new TreeNode<>(element);
+            }
+        }
+
+        void setNext(TreeNode<T> node, Direction direction) {
+            if (direction == Direction.LEFT) {
+                left = node;
+            } else {
+                right = node;
+            }
+        }
+    }
+
+    private enum Direction {
+        LEFT, RIGHT, ZERO;
+
+        static Direction get(int biggerOrLesser) {
+            if (biggerOrLesser < 0) {
+                return LEFT;
+            } else {
+                return RIGHT;
+            }
+        }
+    }
 
 
     public E getRoot() {
@@ -36,26 +92,17 @@ public class BinaryTree<E extends Integer> {
         }
 
         TreeNode<E> node = root;
+        TreeNode<E> parent = node;
+        Direction direction = Direction.ZERO;
 
-        while (true) {
-            if (comparator.compare(element, node.data) < 0) {
-                if (node.left != null) {
-                    node = node.left;
-                } else {
-                    node.left = new TreeNode<>(element);
-                    ++size;
-                    return;
-                }
-            } else {
-                if (node.right != null) {
-                    node = node.right;
-                } else {
-                    node.right = new TreeNode<>(element);
-                    ++size;
-                    return;
-                }
-            }
+        while (node != null) {
+            direction = Direction.get(comparator.compare(element, node.data));
+            parent = node;
+            node = node.getNext(direction);
         }
+
+        parent.addNext(element, direction);
+        ++size;
     }
 
     public TreeNode<E> findNode(E sample) {
@@ -76,27 +123,24 @@ public class BinaryTree<E extends Integer> {
         return null;
     }
 
-    public boolean remove(E sample) {
+    public boolean remove(E element) {
         if (root == null) {
             throw new NoSuchElementException("This tree is empty!");
         }
 
         TreeNode<E> node = root;
         TreeNode<E> parent = null;
-        boolean isLeft = false;
+        Direction direction = Direction.ZERO;
 
         while (node != null) {
-            if (comparator.compare(sample, node.data) < 0) {
-                parent = node;
-                node = node.left;
-                isLeft = true;
-            } else if (comparator.compare(sample, node.data) > 0) {
-                parent = node;
-                node = node.right;
-                isLeft = false;
-            } else {
+            direction = Direction.get(comparator.compare(element, node.data));
+
+            if (direction == Direction.ZERO) {
                 break;
             }
+
+            parent = node;
+            node = node.getNext(direction);
         }
 
         if (node == null) {
@@ -107,21 +151,15 @@ public class BinaryTree<E extends Integer> {
             if (parent == null) {
                 root = null;
             } else {
-                if (isLeft) {
-                    parent.left = null;
-                } else {
-                    parent.right = null;
-                }
+                parent.setNext(null, direction);
             }
         } else if (node.left == null || node.right == null) {
+            TreeNode<E> child = node.left == null ? node.right : node.left;;
+
             if (parent == null) {
-                root = node.left == null ? node.right : node.left;
+                root = child;
             } else {
-                if (isLeft) {
-                    parent.left = node.left == null ? node.right : node.left;
-                } else {
-                    parent.right = node.left == null ? node.right : node.left;
-                }
+                parent.setNext(child, direction);
             }
         } else {
             TreeNode<E> parentMinChild = node.right;
@@ -145,11 +183,7 @@ public class BinaryTree<E extends Integer> {
             if (parent == null) {
                 root = minChild;
             } else {
-                if (isLeft) {
-                    parent.left = minChild;
-                } else {
-                    parent.right = minChild;
-                }
+                parent.setNext(minChild, direction);
             }
         }
 
@@ -167,7 +201,7 @@ public class BinaryTree<E extends Integer> {
 
     private void printNode(int i, TreeNode<E> node) {
         StringBuilder s = new StringBuilder();
-        for (int j = 0; j < i; j++){
+        for (int j = 0; j < i; j++) {
             s.append(" ");
         }
 
@@ -182,25 +216,6 @@ public class BinaryTree<E extends Integer> {
         if (node.right != null) {
             System.out.print("+1");
             printNode(i, node.right);
-        }
-    }
-
-    private class TreeComparator implements Comparator<E> {
-        @Override
-        public int compare(E n1, E n2) {
-            return Integer.compare(n1, n2);
-        }
-    }
-
-    private class TreeNode<T> {
-        private T data;
-        private TreeNode<T> left;
-        private TreeNode<T> right;
-
-        TreeNode(T data) {
-            this.data = data;
-            left = null;
-            right = null;
         }
     }
 }

@@ -11,6 +11,7 @@ public class Main {
         testList.addFirst("333");
         testList.addFirst("222");
         testList.addFirst("111");
+        testList.addFirst(null);
 
         MySingleLinkedList<String> testListCopy = testList.copy();
 

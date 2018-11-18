@@ -1,9 +1,6 @@
 package ru.academits.baklanov.tasks;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class BinaryTree<E extends Integer> {
     private TreeNode<E> root;
@@ -34,34 +31,19 @@ public class BinaryTree<E extends Integer> {
             right = null;
         }
 
-        TreeNode<T> getNext(Direction where) {
-            if (where == Direction.LEFT) {
-                return left;
-            }
-            return right;
-        }
-
-        TreeNode<T> getNext(int key) {
-            if (key < 0) {
-                return left;
-            }
-            return right;
-        }
-
-        void addNext(T element, Direction direction) {
-            if (direction == Direction.LEFT) {
-                left = new TreeNode<>(element);
-            } else {
-                right = new TreeNode<>(element);
-            }
-        }
-
         void setNext(TreeNode<T> node, Direction direction) {
             if (direction == Direction.LEFT) {
                 left = node;
             } else {
                 right = node;
             }
+        }
+
+        TreeNode<T> getNext(Direction where) {
+            if (where == Direction.LEFT) {
+                return left;
+            }
+            return right;
         }
     }
 
@@ -77,8 +59,28 @@ public class BinaryTree<E extends Integer> {
         }
     }
 
-    public E getRoot() {
-        return root.data;
+    private TreeNode<E> excludeMinRightChild(TreeNode<E> node) {
+        if (node == null) {
+            throw new NullPointerException("Узел не найден!");
+        }
+        if (node.right == null) {
+            throw new IllegalArgumentException("У данного узла нет правых потомков!");
+        }
+
+        TreeNode<E> parentMinChild = node;
+        TreeNode<E> minChild = node.right;
+
+        if (minChild.left == null) {
+            parentMinChild.setNext(minChild.right, Direction.RIGHT);
+        } else {
+            while (minChild.left != null) {
+                parentMinChild = minChild;
+                minChild = minChild.left;
+            }
+            parentMinChild.setNext(minChild.right, Direction.LEFT);
+        }
+
+        return minChild;
     }
 
     public int getSize() {
@@ -88,61 +90,20 @@ public class BinaryTree<E extends Integer> {
     public void add(E element) {
         if (root == null) {
             root = new TreeNode<>(element);
-            ++size;
-            return;
-        }
+        } else {
+            Direction direction = Direction.get(comparator.compare(element, root.data));
+            TreeNode<E> parent = root;
+            TreeNode<E> node = root.getNext(direction);
 
-        TreeNode<E> node = root;
-        TreeNode<E> parent = node;
-        Direction direction = Direction.LEFT;
-
-        while (node != null) {
-            direction = Direction.get(comparator.compare(element, node.data));
-            parent = node;
-            node = node.getNext(direction);
-        }
-
-        parent.addNext(element, direction);
-        ++size;
-    }
-
-    public TreeNode<E> findNode(E sample) {
-        if (root == null) {
-            throw new NoSuchElementException("This tree is empty!");
-        }
-
-        for (TreeNode<E> node = root; node != null; ) {
-            if (comparator.compare(sample, node.data) < 0) {
-                node = node.left;
-            } else if (comparator.compare(sample, node.data) > 0) {
-                node = node.right;
-            } else {
-                return node;
+            while (node != null) {
+                direction = Direction.get(comparator.compare(element, node.data));
+                parent = node;
+                node = node.getNext(direction);
             }
+
+            parent.setNext(new TreeNode<>(element), direction);
         }
-
-        return null;
-    }
-
-    private TreeNode<E> deleteChild(TreeNode<E> parent, Direction direction) {
-        if (parent == null) {
-            throw new NullPointerException("Узел не найден!");
-        }
-
-        TreeNode<E> child = parent.getNext(direction);
-
-        if (child == null) {
-            throw new IllegalArgumentException("У данного узла нет детей!");
-        }
-        if (child.left != null && child.right != null) {
-            throw new IllegalArgumentException("У данного узла больше одного внука!");
-        }
-
-        TreeNode<E> grandChild = child.left == null ? child.right : child.left;
-
-        parent.setNext(grandChild, direction);
-
-        return child;
+        ++size;
     }
 
     public boolean remove(E element) {
@@ -173,15 +134,12 @@ public class BinaryTree<E extends Integer> {
         if (node.left == null || node.right == null) {
             node = node.left == null ? node.right : node.left;
         } else {
-            TreeNode<E> parentMinChild = node.right;
+            TreeNode<E> minRightChild = excludeMinRightChild(node);
 
-            while (parentMinChild.left != null) {
-                if (parentMinChild.left.left != null) {
-                    parentMinChild = parentMinChild.left;
-                }
-            }
+            minRightChild.left = node.left;
+            minRightChild.right = node.right;
 
-            node = deleteChild(parentMinChild, Direction.LEFT);
+            node = minRightChild;
         }
 
         if (parent == null) {
@@ -192,6 +150,88 @@ public class BinaryTree<E extends Integer> {
 
         --size;
         return true;
+    }
+
+    public TreeNode<E> findNode(E sample) {
+        if (root == null) {
+            throw new NoSuchElementException("This tree is empty!");
+        }
+
+        for (TreeNode<E> node = root; node != null; ) {
+            int resultOfComparison = comparator.compare(sample, node.data);
+
+            if (resultOfComparison < 0) {
+                node = node.left;
+            } else if (resultOfComparison > 0) {
+                node = node.right;
+            } else {
+                return node;
+            }
+        }
+
+        return null;
+    }
+
+    public String toStringByWidth() {
+        if (size == 0) {
+            return "[]";
+        }
+
+        StringBuilder bufferString = new StringBuilder();
+        bufferString.append('[');
+
+        Queue<TreeNode<E>> queue = new LinkedList<>();
+        queue.add(root);
+
+        for (TreeNode<E> node = queue.poll(); node != null; node = queue.poll()) {
+            if (node.data == null) {
+                bufferString.append("null, ");
+            } else {
+                bufferString.append(node.data.toString()).append(", ");
+            }
+
+            if (node.left != null) {
+                queue.add(node.left);
+            }
+            if (node.right != null) {
+                queue.add(node.right);
+            }
+        }
+
+        bufferString.replace(bufferString.length() - 2, bufferString.length(), "]");
+
+        return bufferString.toString();
+    }
+
+    public String toStringByDepth() {
+        if (size == 0) {
+            return "[]";
+        }
+
+        StringBuilder bufferString = new StringBuilder();
+        bufferString.append('[');
+
+        Deque<TreeNode<E>> stack = new LinkedList<>();
+        stack.push(root);
+
+        for (TreeNode<E> node = stack.poll(); node != null; node = stack.poll()) {
+            if (node.data == null) {
+                bufferString.append("null, ");
+            } else {
+                bufferString.append(node.data.toString()).append(", ");
+            }
+
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+
+        bufferString.replace(bufferString.length() - 2, bufferString.length(), "]");
+
+        return bufferString.toString();
     }
 
     public void printTree() {

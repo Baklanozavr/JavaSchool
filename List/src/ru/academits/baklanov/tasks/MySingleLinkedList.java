@@ -151,7 +151,7 @@ public class MySingleLinkedList<E> {
     @Override
     public String toString() {
         if (size == 0) {
-            return "This list is empty!";
+            return "[]";
         }
 
         StringBuilder bufferString = new StringBuilder();

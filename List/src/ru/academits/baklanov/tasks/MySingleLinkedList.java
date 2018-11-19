@@ -114,11 +114,10 @@ public class MySingleLinkedList<E> {
 
     public void reverse() {
         MyListItem<E> temp = head;
-        MyListItem<E> next;
         head = null;
 
         while (temp != null) {
-            next = temp.getNext();
+            MyListItem<E> next = temp.getNext();
             temp.setNext(head);
             head = temp;
             temp = next;

@@ -9,7 +9,6 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class Main {
-
     public static void main(String[] args) {
         String[] names = {"Иван", "Никифор", "Никодим", "Пётр", "Александр", "Игорь", "Андрей", "Павел", "Ярослав", "Иосиф"};
         ArrayList<Person> people = new ArrayList<>();

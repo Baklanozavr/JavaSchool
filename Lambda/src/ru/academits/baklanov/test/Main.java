@@ -28,16 +28,21 @@ public class Main {
         System.out.println();
 
         List<String> uniqueNames = people.stream()
-                .map(Person::getName).distinct().collect(Collectors.toList());
+                .map(Person::getName)
+                .distinct()
+                .collect(Collectors.toList());
         String stringOfUniqueNames = uniqueNames.stream()
                 .collect(Collectors.joining(", ", "Имена: ", "."));
         System.out.println(stringOfUniqueNames);
         System.out.println();
 
         List<Person> peopleUnder18 = people.stream()
-                .filter(p -> p.getAge() < 18).collect(Collectors.toList());
+                .filter(p -> p.getAge() < 18)
+                .collect(Collectors.toList());
         peopleUnder18.stream()
-                .mapToInt(Person::getAge).average().ifPresent(System.out::println);
+                .mapToInt(Person::getAge)
+                .average()
+                .ifPresent(System.out::println);
         System.out.println();
 
         Map<String, Double> peopleByUniqueName = people.stream().
@@ -47,8 +52,10 @@ public class Main {
         peopleByUniqueName.forEach(mapOfPeopleConsumer);
         System.out.println();
 
-        people.stream().filter(p -> p.getAge() >= 20 && p.getAge() <= 45)
+        people.stream()
+                .filter(p -> p.getAge() >= 20 && p.getAge() <= 45)
                 .sorted((p1, p2) -> p2.getAge() - p1.getAge())
-                .map(Person::getName).forEach(System.out::println);
+                .map(Person::getName)
+                .forEach(System.out::println);
     }
 }

@@ -1,14 +1,18 @@
 package ru.academits.baklanov.tasks;
 
-public final class TemperatureConverter {
+final class TemperatureConverter {
     public enum Scale {
         CELSIUS, KELVIN, FAHRENHEIT
     }
 
-    public static double convert(double degrees, Scale from, Scale to) {
+    static double convert(double degrees, Scale from, Scale to) {
         final double CELSIUS_TO_KELVIN_DELTA = 273.15;
         final double CELSIUS_TO_FAHRENHEIT_DELTA = 32;
         final double CELSIUS_TO_FAHRENHEIT_MULTIPLIER = 1.8;
+
+        if (from == to) {
+            return degrees;
+        }
 
         double temperatureCelsius;
 

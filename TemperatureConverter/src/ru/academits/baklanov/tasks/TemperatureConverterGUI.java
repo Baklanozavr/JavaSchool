@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class TemperatureConverterGUI {
-    public static void main(String[] args) {
+    public TemperatureConverterGUI() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("My first GUI application with Temperature Converter");
 
@@ -99,7 +99,7 @@ public class TemperatureConverterGUI {
             JButton buttonToConvert = new JButton("Перевести!");
             convertButtonPanel.add(buttonToConvert);
 
-            buttonToConvert.addActionListener((ActionEvent e) -> {
+            buttonToConvert.addActionListener((ActionEvent action) -> {
                 TemperatureConverter.Scale fromScale;
                 TemperatureConverter.Scale toScale;
 
@@ -120,10 +120,23 @@ public class TemperatureConverterGUI {
                 }
 
                 String inputText = inputTextField.getText();
-                double inputTemperature = Double.parseDouble(inputText);
-                double outputTemperature = TemperatureConverter.convert(inputTemperature, fromScale, toScale);
-                String outputText = String.format("%.2f", outputTemperature);
-                outputTextField.setText(outputText);
+
+                try {
+                    double inputTemperature = Double.parseDouble(inputText);
+
+                    double outputTemperature = TemperatureConverter.convert(inputTemperature, fromScale, toScale);
+
+                    String outputText = String.format("%.2f", outputTemperature);
+
+                    outputTextField.setText(outputText);
+                } catch (NumberFormatException e) {
+                    inputTextField.setText("");
+
+                    JOptionPane.showMessageDialog(frame,
+                            "Нельзя вводить НЕ числа!",
+                            "Ошибка ввода!",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             });
         });
     }

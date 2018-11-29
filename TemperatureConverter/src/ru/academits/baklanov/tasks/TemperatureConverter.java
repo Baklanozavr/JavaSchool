@@ -5,7 +5,7 @@ public final class TemperatureConverter {
         CELSIUS, KELVIN, FAHRENHEIT
     }
 
-    public static double convert(Double degrees, Scale from, Scale to) {
+    public static double convert(double degrees, Scale from, Scale to) {
         final double CELSIUS_TO_KELVIN_DELTA = 273.15;
         final double CELSIUS_TO_FAHRENHEIT_DELTA = 32;
         final double CELSIUS_TO_FAHRENHEIT_MULTIPLIER = 1.8;

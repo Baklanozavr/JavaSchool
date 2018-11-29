@@ -3,14 +3,13 @@ package ru.academits.baklanov.tasks;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class TemperatureConverterGUI {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("My first GUI application with Temperature Converter");
 
-            frame.setSize(600, 400);
+            frame.setSize(500, 200);
             frame.setResizable(false);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
@@ -22,6 +21,14 @@ public class TemperatureConverterGUI {
 
             JPanel convertButtonPanel = new JPanel();
             frame.add(convertButtonPanel, BorderLayout.SOUTH);
+
+            JPanel inputPanel = new JPanel();
+            inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.PAGE_AXIS));
+            frame.add(inputPanel, BorderLayout.LINE_START);
+
+            JPanel outputPanel = new JPanel();
+            outputPanel.setLayout(new BoxLayout(outputPanel, BoxLayout.PAGE_AXIS));
+            frame.add(outputPanel, BorderLayout.LINE_END);
 
             JPanel scalesChoicePanel = new JPanel();
             scalesChoicePanel.setLayout(new BoxLayout(scalesChoicePanel, BoxLayout.LINE_AXIS));
@@ -76,11 +83,48 @@ public class TemperatureConverterGUI {
             toButtonGroup.add(fahrenheitToButton);
             toButtonGroup.add(kelvinToButton);
 
-            //celsiusFromButton.addActionListener((ActionEvent e) -> celsiusToButton.setEnabled(false));
+            JTextField inputTextField = new JTextField("", 6);
+            inputTextField.setFont(new Font("Dialog", Font.PLAIN, 20));
+            inputTextField.setHorizontalAlignment(JTextField.CENTER);
+            inputTextField.setToolTipText("Введите сюда температуру (число градусов)");
+            inputPanel.add(inputTextField);
 
+            JTextField outputTextField = new JTextField("Output", 6);
+            outputTextField.setFont(new Font("Dialog", Font.PLAIN, 20));
+            outputTextField.setHorizontalAlignment(JTextField.CENTER);
+            outputTextField.setToolTipText("Окно для температуры после перевода в необходимую шкалу");
+            outputTextField.setEditable(false);
+            outputPanel.add(outputTextField);
 
             JButton buttonToConvert = new JButton("Перевести!");
             convertButtonPanel.add(buttonToConvert);
+
+            buttonToConvert.addActionListener((ActionEvent e) -> {
+                TemperatureConverter.Scale fromScale;
+                TemperatureConverter.Scale toScale;
+
+                if (celsiusFromButton.isSelected()) {
+                    fromScale = TemperatureConverter.Scale.CELSIUS;
+                } else if (fahrenheitFromButton.isSelected()) {
+                    fromScale = TemperatureConverter.Scale.FAHRENHEIT;
+                } else {
+                    fromScale = TemperatureConverter.Scale.KELVIN;
+                }
+
+                if (celsiusToButton.isSelected()) {
+                    toScale = TemperatureConverter.Scale.CELSIUS;
+                } else if (fahrenheitToButton.isSelected()) {
+                    toScale = TemperatureConverter.Scale.FAHRENHEIT;
+                } else {
+                    toScale = TemperatureConverter.Scale.KELVIN;
+                }
+
+                String inputText = inputTextField.getText();
+                double inputTemperature = Double.parseDouble(inputText);
+                double outputTemperature = TemperatureConverter.convert(inputTemperature, fromScale, toScale);
+                String outputText = String.format("%.2f", outputTemperature);
+                outputTextField.setText(outputText);
+            });
         });
     }
 }

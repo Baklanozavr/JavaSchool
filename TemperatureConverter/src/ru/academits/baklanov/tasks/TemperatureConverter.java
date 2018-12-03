@@ -2,42 +2,48 @@ package ru.academits.baklanov.tasks;
 
 final class TemperatureConverter {
     public enum Scale {
-        CELSIUS, KELVIN, FAHRENHEIT
+        CELSIUS("шкала Цельсия", 1, 0),
+        KELVIN("шкала Кельвина", 1, 273.15),
+        FAHRENHEIT("шкала Фаренгейта", 1.8, 32);
+
+        private final String name;
+        private final double fromCelsiusMultiplier;
+        private final double fromCelsiusDelta;
+
+        Scale(String name, double fromCelsiusMultiplier, double fromCelsiusDelta) {
+            this.name = name;
+            this.fromCelsiusMultiplier = fromCelsiusMultiplier;
+            this.fromCelsiusDelta = fromCelsiusDelta;
+        }
+
+        public String getNameString() {
+            return name;
+        }
+
+        public double convertToCelsius(double temperature) {
+            return (temperature - fromCelsiusDelta) / fromCelsiusMultiplier;
+        }
+
+        public double convertFromCelsius(double temperature) {
+            return temperature * fromCelsiusMultiplier + fromCelsiusDelta;
+        }
     }
 
     static double convert(double degrees, Scale from, Scale to) {
-        final double CELSIUS_TO_KELVIN_DELTA = 273.15;
-        final double CELSIUS_TO_FAHRENHEIT_DELTA = 32;
-        final double CELSIUS_TO_FAHRENHEIT_MULTIPLIER = 1.8;
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("Не выбраны шкалы для перевода!");
+        }
 
         if (from == to) {
             return degrees;
         }
 
-        double temperatureCelsius;
+        double temperatureCelsius = from.convertToCelsius(degrees);
 
-        if (from == Scale.KELVIN) {
-            temperatureCelsius = degrees - CELSIUS_TO_KELVIN_DELTA;
-
-            if (to == Scale.FAHRENHEIT) {
-                return temperatureCelsius * CELSIUS_TO_FAHRENHEIT_MULTIPLIER + CELSIUS_TO_FAHRENHEIT_DELTA;
-            }
-            return temperatureCelsius;
+        if (temperatureCelsius < -Scale.KELVIN.fromCelsiusDelta) {
+            throw new IllegalArgumentException("Такой температуры не бывает!");
         }
 
-        if (from == Scale.FAHRENHEIT) {
-            temperatureCelsius = (degrees - CELSIUS_TO_FAHRENHEIT_DELTA) / CELSIUS_TO_FAHRENHEIT_MULTIPLIER;
-
-            if (to == Scale.KELVIN) {
-                return (degrees - CELSIUS_TO_FAHRENHEIT_DELTA) / CELSIUS_TO_FAHRENHEIT_MULTIPLIER + CELSIUS_TO_KELVIN_DELTA;
-            }
-            return temperatureCelsius;
-        }
-
-        if (to == Scale.FAHRENHEIT) {
-            return degrees * CELSIUS_TO_FAHRENHEIT_MULTIPLIER + CELSIUS_TO_FAHRENHEIT_DELTA;
-        }
-
-        return degrees + CELSIUS_TO_KELVIN_DELTA;
+        return to.convertFromCelsius(temperatureCelsius);
     }
 }

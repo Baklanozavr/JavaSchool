@@ -3,6 +3,7 @@ package ru.academits.baklanov.tasks;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 public class TemperatureConverterGUI {
     public TemperatureConverterGUI() {
@@ -49,39 +50,25 @@ public class TemperatureConverterGUI {
             infoLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
             infoLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            JRadioButton celsiusFromButton = new JRadioButton("шкала Цельсия", true);
-            scalesFromPanel.add(celsiusFromButton);
+            ArrayList<JRadioButton> fromButtonsArray = new ArrayList<>();
+            ArrayList<JRadioButton> toButtonsArray = new ArrayList<>();
 
-            JRadioButton fahrenheitFromButton = new JRadioButton("шкала Фаренгейта");
-            scalesFromPanel.add(fahrenheitFromButton);
+            for (TemperatureConverter.Scale scale : TemperatureConverter.Scale.values()) {
+                fromButtonsArray.add(new JRadioButton(scale.getNameString()));
+                toButtonsArray.add(new JRadioButton(scale.getNameString()));
+            }
 
-            JRadioButton kelvinFromButton = new JRadioButton("шкала Кельвина");
-            scalesFromPanel.add(kelvinFromButton);
+            toButtonsArray.forEach(button -> button.setHorizontalTextPosition(SwingConstants.LEFT));
+            toButtonsArray.forEach(button -> button.setAlignmentX(Component.RIGHT_ALIGNMENT));
 
-            JRadioButton celsiusToButton = new JRadioButton("шкала Цельсия");
-            celsiusToButton.setHorizontalTextPosition(SwingConstants.LEFT);
-            scalesToPanel.add(celsiusToButton);
-            celsiusToButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-            JRadioButton fahrenheitToButton = new JRadioButton("шкала Фаренгейта", true);
-            fahrenheitToButton.setHorizontalTextPosition(SwingConstants.LEFT);
-            scalesToPanel.add(fahrenheitToButton);
-            fahrenheitToButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-            JRadioButton kelvinToButton = new JRadioButton("шкала Кельвина");
-            kelvinToButton.setHorizontalTextPosition(SwingConstants.LEFT);
-            scalesToPanel.add(kelvinToButton);
-            kelvinToButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+            fromButtonsArray.forEach(scalesFromPanel::add);
+            toButtonsArray.forEach(scalesToPanel::add);
 
             ButtonGroup fromButtonGroup = new ButtonGroup();
-            fromButtonGroup.add(celsiusFromButton);
-            fromButtonGroup.add(fahrenheitFromButton);
-            fromButtonGroup.add(kelvinFromButton);
+            fromButtonsArray.forEach(fromButtonGroup::add);
 
             ButtonGroup toButtonGroup = new ButtonGroup();
-            toButtonGroup.add(celsiusToButton);
-            toButtonGroup.add(fahrenheitToButton);
-            toButtonGroup.add(kelvinToButton);
+            toButtonsArray.forEach(toButtonGroup::add);
 
             JTextField inputTextField = new JTextField("", 6);
             inputTextField.setFont(new Font("Dialog", Font.PLAIN, 20));
@@ -100,23 +87,17 @@ public class TemperatureConverterGUI {
             convertButtonPanel.add(buttonToConvert);
 
             buttonToConvert.addActionListener((ActionEvent action) -> {
-                TemperatureConverter.Scale fromScale;
-                TemperatureConverter.Scale toScale;
+                TemperatureConverter.Scale fromScale = null;
+                TemperatureConverter.Scale toScale = null;
 
-                if (celsiusFromButton.isSelected()) {
-                    fromScale = TemperatureConverter.Scale.CELSIUS;
-                } else if (fahrenheitFromButton.isSelected()) {
-                    fromScale = TemperatureConverter.Scale.FAHRENHEIT;
-                } else {
-                    fromScale = TemperatureConverter.Scale.KELVIN;
-                }
+                for (int i = 0; i < TemperatureConverter.Scale.values().length; ++i) {
+                    if (fromButtonsArray.get(i).isSelected()) {
+                        fromScale = TemperatureConverter.Scale.values()[i];
+                    }
 
-                if (celsiusToButton.isSelected()) {
-                    toScale = TemperatureConverter.Scale.CELSIUS;
-                } else if (fahrenheitToButton.isSelected()) {
-                    toScale = TemperatureConverter.Scale.FAHRENHEIT;
-                } else {
-                    toScale = TemperatureConverter.Scale.KELVIN;
+                    if (toButtonsArray.get(i).isSelected()) {
+                        toScale = TemperatureConverter.Scale.values()[i];
+                    }
                 }
 
                 String inputText = inputTextField.getText();
@@ -130,12 +111,21 @@ public class TemperatureConverterGUI {
 
                     outputTextField.setText(outputText);
                 } catch (NumberFormatException e) {
-                    inputTextField.setText("");
+                    inputTextField.setText("Input");
+                    outputTextField.setText("Output");
 
                     JOptionPane.showMessageDialog(frame,
                             "Нельзя вводить НЕ числа!",
                             "Ошибка ввода!",
                             JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException e) {
+                    outputTextField.setText("Output");
+
+                    JOptionPane.showMessageDialog(frame,
+                            e.getMessage(),
+                            "Ошибка ввода!",
+                            JOptionPane.ERROR_MESSAGE);
+
                 }
             });
         });

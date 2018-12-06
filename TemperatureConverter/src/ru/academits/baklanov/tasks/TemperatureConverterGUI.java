@@ -10,7 +10,7 @@ public class TemperatureConverterGUI {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("My first GUI application with Temperature Converter");
 
-            frame.setSize(500, 200);
+            frame.setSize(500, 240);
             frame.setResizable(false);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
@@ -45,10 +45,17 @@ public class TemperatureConverterGUI {
 
             JLabel infoLabel1 = new JLabel("Это программа для перевода температуры из одной шкалы в другую,");
             JLabel infoLabel2 = new JLabel("(доступные шкалы: Цельсия, Фаренгейта, Кельвина).");
+            JLabel blankLabel = new JLabel(" ");
+            JLabel errorLabel = new JLabel(" ");
+            errorLabel.setForeground(Color.RED);
             infoPanel.add(infoLabel1);
             infoPanel.add(infoLabel2);
+            infoPanel.add(blankLabel);
+            infoPanel.add(errorLabel);
             infoLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
             infoLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
+            blankLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             ArrayList<JRadioButton> fromButtonsArray = new ArrayList<>();
             ArrayList<JRadioButton> toButtonsArray = new ArrayList<>();
@@ -56,6 +63,13 @@ public class TemperatureConverterGUI {
             for (TemperatureConverter.Scale scale : TemperatureConverter.Scale.values()) {
                 fromButtonsArray.add(new JRadioButton(scale.getNameString()));
                 toButtonsArray.add(new JRadioButton(scale.getNameString()));
+            }
+
+            if (fromButtonsArray.size() > 0) {
+                fromButtonsArray.get(0).setSelected(true);
+            }
+            if (toButtonsArray.size() > 0) {
+                toButtonsArray.get(0).setSelected(true);
             }
 
             toButtonsArray.forEach(button -> button.setHorizontalTextPosition(SwingConstants.LEFT));
@@ -87,6 +101,8 @@ public class TemperatureConverterGUI {
             convertButtonPanel.add(buttonToConvert);
 
             buttonToConvert.addActionListener((ActionEvent action) -> {
+                errorLabel.setText(" ");
+
                 TemperatureConverter.Scale fromScale = null;
                 TemperatureConverter.Scale toScale = null;
 
@@ -111,21 +127,12 @@ public class TemperatureConverterGUI {
 
                     outputTextField.setText(outputText);
                 } catch (NumberFormatException e) {
-                    inputTextField.setText("Input");
+                    inputTextField.setText("");
                     outputTextField.setText("Output");
-
-                    JOptionPane.showMessageDialog(frame,
-                            "Нельзя вводить НЕ числа!",
-                            "Ошибка ввода!",
-                            JOptionPane.ERROR_MESSAGE);
+                    errorLabel.setText("Нельзя вводить НЕ числа!");
                 } catch (IllegalArgumentException e) {
                     outputTextField.setText("Output");
-
-                    JOptionPane.showMessageDialog(frame,
-                            e.getMessage(),
-                            "Ошибка ввода!",
-                            JOptionPane.ERROR_MESSAGE);
-
+                    errorLabel.setText(e.getMessage());
                 }
             });
         });

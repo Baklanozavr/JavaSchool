@@ -5,8 +5,8 @@ import java.util.Random;
 public class MineField {
     private Tile[] field;
     private int[] minesIndexes;
-    private int height = 8;
-    int width = height;
+    private int height = 16;
+    int width = 31;
 
     public MineField() {
         field = new Tile[height * width];
@@ -32,7 +32,7 @@ public class MineField {
             neighbor.setMine();
         }
 
-        int howMany = 10;
+        int howMany = 99;
 
         minesIndexes = new int[howMany];
 

@@ -34,10 +34,6 @@ final class TemperatureConverter {
             throw new IllegalArgumentException("Не выбраны шкалы для перевода!");
         }
 
-        if (from == to) {
-            return degrees;
-        }
-
         double temperatureCelsius = from.convertToCelsius(degrees);
 
         if (temperatureCelsius < -Scale.KELVIN.fromCelsiusDelta) {

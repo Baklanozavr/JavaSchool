@@ -143,7 +143,7 @@ public class MineField {
             candidates[5] = -1;
         }
 
-        if (index + 1 % width == 0) {
+        if ((index + 1) % width == 0) {
             candidates[2] = -1;
             candidates[4] = -1;
             candidates[7] = -1;

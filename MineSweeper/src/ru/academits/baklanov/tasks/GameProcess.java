@@ -1,6 +1,5 @@
 package ru.academits.baklanov.tasks;
 
-import javax.swing.*;
 import java.util.*;
 
 public class GameProcess {
@@ -22,7 +21,7 @@ public class GameProcess {
 
     public enum Difficulty {
         EASY(8, 8, 10),
-        MEDIUM(16, 16, 20),
+        MEDIUM(16, 16, 40),
         HARD(31, 16, 99);
 
         private final int width;
@@ -42,6 +41,19 @@ public class GameProcess {
         return mineField;
     }
 
+    public boolean setFlag(int indexOfTile) {
+        flags.flip(indexOfTile);
+        return flags.get(indexOfTile);
+    }
+
+    public boolean isOpen(int indexOfTile) {
+        return openedTiles.get(indexOfTile);
+    }
+
+    public boolean isFlag(int indexOfTile) {
+        return flags.get(indexOfTile);
+    }
+
     public BitSet getOpenedTiles() {
         return openedTiles;
     }
@@ -52,29 +64,16 @@ public class GameProcess {
         ArrayList<Integer> tilesForOpen = new ArrayList<>();
 
         tilesForOpen.add(index);
-/*
-        tilesForOpen.forEach(indexOfTile -> {
-            if (mineField.getTile(indexOfTile).getNumberOfAdjacentMines() == 0) {
-                mineField.getIndexesOfNeighbors(indexOfTile).forEach(indexOfNeighbor -> {
-                    if (!openedTiles.get(indexOfNeighbor)) {
-                        tilesForOpen.add(indexOfNeighbor);
-                    }
-                });
-            }
-            indexesForOpen.set(indexOfTile);
-            openedTiles.set(indexOfTile);
-        });*/
-
 
         for (int i = 0; i < tilesForOpen.size(); ++i) {
             int indexOfTile = tilesForOpen.get(i);
 
             if (mineField.getTile(indexOfTile).getNumberOfAdjacentMines() == 0) {
-                mineField.getIndexesOfNeighbors(indexOfTile).forEach(indexOfNeighbor -> {
-                    if (!openedTiles.get(indexOfNeighbor)) {
+                for (int indexOfNeighbor : mineField.getIndexesOfNeighbors(indexOfTile)) {
+                    if (!openedTiles.get(indexOfNeighbor) && !flags.get(indexOfNeighbor)) {
                         tilesForOpen.add(indexOfNeighbor);
                     }
-                });
+                }
             }
 
             indexesForOpen.set(indexOfTile);
@@ -85,16 +84,4 @@ public class GameProcess {
     }
 
 
-    public void openTiles(ArrayList<JButton> fieldButtonsArray, MineField field, int indexOfClickedTile) {
-        SwingUtilities.invokeLater(() -> {
-            Tile selectedTile = field.getTile(indexOfClickedTile);
-
-            int numberOfAdjacentMines = selectedTile.getNumberOfAdjacentMines();
-
-            HashSet<JButton> buttonsForOpen = new HashSet<>();
-            buttonsForOpen.add(fieldButtonsArray.get(indexOfClickedTile));
-
-
-        });
-    }
 }

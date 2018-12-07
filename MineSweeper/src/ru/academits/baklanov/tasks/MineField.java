@@ -31,6 +31,8 @@ public class MineField {
         return height;
     }
 
+
+
     public Tile[] getField() {
         return field;
     }

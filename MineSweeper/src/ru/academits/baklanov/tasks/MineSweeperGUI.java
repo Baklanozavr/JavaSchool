@@ -50,11 +50,8 @@ public class MineSweeperGUI {
                             }
                         } else {
                             if (!game.isFlag(clickedIndex)) {
-                                BitSet indexesForOpening = game.openTilesFrom(clickedIndex);
 
-                                for (int i = indexesForOpening.nextSetBit(0);
-                                     i >= 0;
-                                     i = indexesForOpening.nextSetBit(i + 1)) {
+                                for (Integer i : game.openTilesFrom(clickedIndex)){
                                     Tile selectedTile = game.getMineField().getTile(i);
 
                                     if (selectedTile.isMine()) {

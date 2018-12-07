@@ -58,12 +58,36 @@ public class GameProcess {
         return openedTiles;
     }
 
+    private boolean checkAdjacentFlags(int index) {
+        ArrayList<Integer> neighbors = mineField.getIndexesOfNeighbors(index);
+
+        int flagsAndMinesCounter = 0;
+
+        for (int indexOfNeighbor : neighbors) {
+            if (!openedTiles.get(indexOfNeighbor) && flags.get(indexOfNeighbor)) {
+                ++flagsAndMinesCounter;
+            }
+        }
+
+        return flagsAndMinesCounter == mineField.getTile(index).getNumberOfAdjacentMines();
+    }
+
     //возвращает набор индексов для открытия
-    public BitSet openTilesFrom(int index) {
+    public ArrayList<Integer> openTilesFrom(int index) {
         BitSet indexesForOpen = new BitSet(difficulty.fieldSize);
         ArrayList<Integer> tilesForOpen = new ArrayList<>();
 
-        tilesForOpen.add(index);
+        if (openedTiles.get(index)) {
+            if (checkAdjacentFlags(index)) {
+                for (int indexOfNeighbor : mineField.getIndexesOfNeighbors(index)) {
+                    if (!openedTiles.get(indexOfNeighbor) && !flags.get(indexOfNeighbor)) {
+                        tilesForOpen.add(indexOfNeighbor);
+                    }
+                }
+            }
+        } else {
+            tilesForOpen.add(index);
+        }
 
         for (int i = 0; i < tilesForOpen.size(); ++i) {
             int indexOfTile = tilesForOpen.get(i);
@@ -80,7 +104,7 @@ public class GameProcess {
             openedTiles.set(indexOfTile);
         }
 
-        return indexesForOpen;
+        return tilesForOpen;
     }
 
 

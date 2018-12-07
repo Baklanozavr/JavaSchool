@@ -2,9 +2,15 @@ package ru.academits.baklanov.tasks;
 
 public class Main {
     public static void main(String[] args) {
-        MineField field = new MineField();
+        //testMineField();
 
-        int start = 20;
+        MineSweeperGUI mineSweeper = new MineSweeperGUI();
+    }
+
+    private static void testMineField() {
+        MineField field = new MineField(31, 16, 99);
+
+        int start = 31 * 16 - 1;
 
         field.setMines(start);
 

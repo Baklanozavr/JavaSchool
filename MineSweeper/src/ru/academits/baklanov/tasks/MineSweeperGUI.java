@@ -13,6 +13,25 @@ public class MineSweeperGUI {
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+            //создаём меню
+            JMenuBar menuBar = new JMenuBar();
+            JMenu gameMenu = new JMenu("Игра");
+            gameMenu.add(new JMenuItem("Новая"));
+            gameMenu.addSeparator();
+            JMenu difficultyMenu = new JMenu("Сложность");
+            difficultyMenu.add(new JMenuItem("Новичок"));
+            difficultyMenu.add(new JMenuItem("Любитель"));
+            difficultyMenu.add(new JMenuItem("Профессионал"));
+            gameMenu.add(difficultyMenu);
+            gameMenu.addSeparator();
+
+            JMenuItem exit = new JMenuItem("Выйти");
+            exit.addActionListener(event -> System.exit(0));
+            gameMenu.add(exit);
+
+            menuBar.add(gameMenu);
+            frame.setJMenuBar(menuBar);
+
             GameProcess game = new GameProcess(GameProcess.Difficulty.MEDIUM);
             int start = game.getOpenedTiles().size() - 1;
             game.getMineField().setMines(start);

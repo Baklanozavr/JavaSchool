@@ -106,6 +106,4 @@ public class GameProcess {
 
         return tilesForOpen;
     }
-
-
 }

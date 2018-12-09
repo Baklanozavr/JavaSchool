@@ -20,20 +20,26 @@ public class GameProcess {
     }
 
     public enum Difficulty {
-        EASY(8, 8, 10),
-        MEDIUM(16, 16, 40),
-        HARD(31, 16, 99);
+        EASY(8, 8, 10, "Новичок"),
+        MEDIUM(16, 16, 40, "Любитель"),
+        HARD(31, 16, 99, "Профессионал");
 
         private final int width;
         private final int height;
         private final int fieldSize;
         private final int totalNumberOfMines;
+        private String name;
 
-        Difficulty(int width, int height, int totalNumberOfMines) {
+        Difficulty(int width, int height, int totalNumberOfMines, String name) {
             this.width = width;
             this.height = height;
             this.fieldSize = width * height;
             this.totalNumberOfMines = totalNumberOfMines;
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
@@ -41,9 +47,19 @@ public class GameProcess {
         return mineField;
     }
 
+    public void setNewDifficulty(Difficulty difficulty) {
+        mineField = new MineField(difficulty.width, difficulty.height, difficulty.totalNumberOfMines);
+        flags = new BitSet(difficulty.fieldSize);
+        openedTiles = new BitSet(difficulty.fieldSize);
+    }
+
     public boolean setFlag(int indexOfTile) {
         flags.flip(indexOfTile);
         return flags.get(indexOfTile);
+    }
+
+    public Difficulty[] getVariantsOfDifficulty() {
+        return Difficulty.values();
     }
 
     public boolean isOpen(int indexOfTile) {

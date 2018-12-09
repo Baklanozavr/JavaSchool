@@ -9,22 +9,25 @@ public class MineSweeperGUI {
     public MineSweeperGUI() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("MineSweeper by Baklanozavr");
-
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            //создаём меню
+            GameProcess game = new GameProcess(GameProcess.Difficulty.MEDIUM);
+
             JMenuBar menuBar = new JMenuBar();
             JMenu gameMenu = new JMenu("Игра");
             gameMenu.add(new JMenuItem("Новая"));
             gameMenu.addSeparator();
+/*
             JMenu difficultyMenu = new JMenu("Сложность");
-            difficultyMenu.add(new JMenuItem("Новичок"));
-            difficultyMenu.add(new JMenuItem("Любитель"));
-            difficultyMenu.add(new JMenuItem("Профессионал"));
+            for(GameProcess.Difficulty difficulty : game.getVariantsOfDifficulty()) {
+                JMenuItem difficultySetting = new JMenuItem(difficulty.getName());
+                difficultySetting.addActionListener(event -> game.setNewDifficulty(difficulty));
+                difficultyMenu.add(difficultySetting);
+            }
             gameMenu.add(difficultyMenu);
             gameMenu.addSeparator();
-
+*/
             JMenuItem exit = new JMenuItem("Выйти");
             exit.addActionListener(event -> System.exit(0));
             gameMenu.add(exit);
@@ -32,7 +35,6 @@ public class MineSweeperGUI {
             menuBar.add(gameMenu);
             frame.setJMenuBar(menuBar);
 
-            GameProcess game = new GameProcess(GameProcess.Difficulty.MEDIUM);
             int start = game.getOpenedTiles().size() - 1;
             game.getMineField().setMines(start);
 

@@ -18,16 +18,16 @@ public class MineSweeperGUI {
             JMenu gameMenu = new JMenu("Игра");
             gameMenu.add(new JMenuItem("Новая"));
             gameMenu.addSeparator();
-/*
+
             JMenu difficultyMenu = new JMenu("Сложность");
             for(GameProcess.Difficulty difficulty : game.getVariantsOfDifficulty()) {
                 JMenuItem difficultySetting = new JMenuItem(difficulty.getName());
-                difficultySetting.addActionListener(event -> game.setNewDifficulty(difficulty));
+                //difficultySetting.addActionListener(event -> game.setNewDifficulty(difficulty));
                 difficultyMenu.add(difficultySetting);
             }
             gameMenu.add(difficultyMenu);
             gameMenu.addSeparator();
-*/
+
             JMenuItem exit = new JMenuItem("Выйти");
             exit.addActionListener(event -> System.exit(0));
             gameMenu.add(exit);
@@ -35,14 +35,31 @@ public class MineSweeperGUI {
             menuBar.add(gameMenu);
             frame.setJMenuBar(menuBar);
 
+            JPanel gamePanel = new JPanel();
+            gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.PAGE_AXIS));
+            frame.add(gamePanel, BorderLayout.CENTER);
+
             int start = game.getOpenedTiles().size() - 1;
             game.getMineField().setMines(start);
+
+            JPanel infoPanel = new JPanel();
+            infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
+            gamePanel.add(infoPanel);
+
+            JLabel minesBalanceLabel = new JLabel("Mines");
+            infoPanel.add(minesBalanceLabel);
+            infoPanel.add(Box.createHorizontalGlue());
+            JButton resetButton = new JButton("Reset");
+            infoPanel.add(resetButton);
+            infoPanel.add(Box.createHorizontalGlue());
+            JLabel timeLabel = new JLabel("Time");
+            infoPanel.add(timeLabel);
 
             GridLayout fieldGridLayout = new GridLayout(game.getMineField().getHeight(), game.getMineField().getWidth() - 1);
 
             JPanel fieldPanel = new JPanel();
             fieldPanel.setLayout(fieldGridLayout);
-            frame.add(fieldPanel);
+            gamePanel.add(fieldPanel);
 
             ArrayList<JButton> fieldButtonsArray = new ArrayList<>();
 

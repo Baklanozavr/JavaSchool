@@ -151,8 +151,6 @@ public class GameProcess {
 
         openedTilesCounter += openedTiles.size();
 
-        System.out.println(openedTilesCounter);
-
         return new ArrayList<>(openedTiles);
     }
 

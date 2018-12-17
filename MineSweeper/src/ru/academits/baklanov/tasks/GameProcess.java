@@ -3,37 +3,27 @@ package ru.academits.baklanov.tasks;
 import java.util.*;
 
 public class GameProcess {
-    private Difficulty difficulty;
     private MineField mineField;
     private BitSet openedTiles;
     private BitSet flags;
-
-    public GameProcess(Difficulty difficulty) {
-        if (difficulty == null) {
-            throw new NullPointerException("Сложность не установлена!");
-        }
-
-        this.difficulty = difficulty;
-        mineField = new MineField(difficulty.width, difficulty.height, difficulty.totalNumberOfMines);
-        flags = new BitSet(difficulty.fieldSize);
-        openedTiles = new BitSet(difficulty.fieldSize);
-    }
+    private int openedTilesCounter;
+    private boolean isFail;
 
     public enum Difficulty {
         EASY(8, 8, 10, "Новичок"),
         MEDIUM(16, 16, 40, "Любитель"),
         HARD(31, 16, 99, "Профессионал");
 
-        private final int width;
-        private final int height;
+        private final int fieldWidth;
+        private final int fieldHeight;
         private final int fieldSize;
         private final int totalNumberOfMines;
         private String name;
 
-        Difficulty(int width, int height, int totalNumberOfMines, String name) {
-            this.width = width;
-            this.height = height;
-            this.fieldSize = width * height;
+        Difficulty(int fieldWidth, int fieldHeight, int totalNumberOfMines, String name) {
+            this.fieldWidth = fieldWidth;
+            this.fieldHeight = fieldHeight;
+            this.fieldSize = fieldWidth * fieldHeight;
             this.totalNumberOfMines = totalNumberOfMines;
             this.name = name;
         }
@@ -41,16 +31,42 @@ public class GameProcess {
         public String getName() {
             return name;
         }
+
+        public int getFieldWidth() {
+            return fieldWidth;
+        }
+
+        public int getFieldHeight() {
+            return fieldHeight;
+        }
+
+        public int getFieldSize() {
+            return fieldHeight * fieldWidth;
+        }
+
+        public int getTotalNumberOfMines() {
+            return totalNumberOfMines;
+        }
+    }
+
+    public enum TileState {
+        MINE, ERROR_MINE, BOOMED_MINE, FLAG, NO_FLAG, EMPTY, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT
+    }
+
+    public GameProcess(Difficulty difficulty) {
+        if (difficulty == null) {
+            throw new NullPointerException("Сложность не установлена!");
+        }
+
+        mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
+        flags = new BitSet(difficulty.fieldSize);
+        openedTiles = new BitSet(difficulty.fieldSize);
+        openedTilesCounter = 0;
+        isFail = false;
     }
 
     public MineField getMineField() {
         return mineField;
-    }
-
-    public void setNewDifficulty(Difficulty difficulty) {
-        mineField = new MineField(difficulty.width, difficulty.height, difficulty.totalNumberOfMines);
-        flags = new BitSet(difficulty.fieldSize);
-        openedTiles = new BitSet(difficulty.fieldSize);
     }
 
     public boolean setFlag(int indexOfTile) {
@@ -58,7 +74,7 @@ public class GameProcess {
         return flags.get(indexOfTile);
     }
 
-    public Difficulty[] getVariantsOfDifficulty() {
+    public static Difficulty[] getVariantsOfDifficulty() {
         return Difficulty.values();
     }
 
@@ -90,7 +106,7 @@ public class GameProcess {
 
     //возвращает набор индексов для открытия
     public ArrayList<Integer> openTilesFrom(int index) {
-        BitSet indexesForOpen = new BitSet(difficulty.fieldSize);
+        BitSet indexesForOpen = new BitSet(mineField.getField().length);
         ArrayList<Integer> tilesForOpen = new ArrayList<>();
 
         if (openedTiles.get(index)) {
@@ -120,6 +136,55 @@ public class GameProcess {
             openedTiles.set(indexOfTile);
         }
 
+        openedTilesCounter += tilesForOpen.size();
+
         return tilesForOpen;
+    }
+
+    public HashMap<Integer, String> markTile(int clickedIndex) {
+        HashMap<Integer, String> tilesForChange = new HashMap<>();
+
+        if (!isOpen(clickedIndex)) {
+            String result = "";
+
+            if (setFlag(clickedIndex)) {
+                result = "F";
+            }
+
+            tilesForChange.put(clickedIndex, result);
+        }
+
+        return tilesForChange;
+    }
+
+    public HashMap<Integer, String> openTiles(int clickedIndex) {
+        HashMap<Integer, String> tilesForChange = new HashMap<>();
+        ArrayList<Integer> tilesForOpen = openTilesFrom(clickedIndex);
+
+        String result;
+
+        for (Integer i : tilesForOpen) {
+            Tile selectedTile = mineField.getTile(i);
+
+            if (selectedTile.isMine()) {
+                result = "X";
+            } else {
+                int numberOfAdjacentMines = selectedTile.getNumberOfAdjacentMines();
+
+                if (numberOfAdjacentMines != 0) {
+                    result = String.valueOf(numberOfAdjacentMines);
+                } else {
+                    result = "";
+                }
+            }
+
+            tilesForChange.put(i, result);
+        }
+
+        return tilesForChange;
+    }
+
+    public boolean isFail() {
+        return isFail;
     }
 }

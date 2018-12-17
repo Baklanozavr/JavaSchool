@@ -9,6 +9,7 @@ public class Tile {
     public Tile() {
         isMine = false;
         isFlag = false;
+        isOpened = false;
         numberOfAdjacentMines = 0;
     }
 
@@ -17,8 +18,12 @@ public class Tile {
         numberOfAdjacentMines = -1;
     }
 
-    public void setFlag() {
-        isFlag = true;
+    public boolean setFlag() {
+        if (isFlag) {
+            return isFlag = false;
+        } else {
+            return isFlag = true;
+        }
     }
 
     public boolean open() {
@@ -41,6 +46,10 @@ public class Tile {
         return isMine;
     }
 
+    boolean isFlag() {
+        return isFlag;
+    }
+
     public boolean isOpened() {
         return isOpened;
     }
@@ -48,6 +57,7 @@ public class Tile {
     public void clear() {
         isMine = false;
         isFlag = false;
+        isOpened = false;
         numberOfAdjacentMines = 0;
     }
 }

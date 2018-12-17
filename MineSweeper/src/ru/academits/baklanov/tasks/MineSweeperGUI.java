@@ -5,22 +5,28 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import static ru.academits.baklanov.tasks.GameProcess.*;
+
 public class MineSweeperGUI {
     public MineSweeperGUI() {
         SwingUtilities.invokeLater(() -> {
+            Difficulty defaultDifficulty = Difficulty.MEDIUM;
+
             JFrame frame = new JFrame("MineSweeper by Baklanozavr");
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            GameProcess game = new GameProcess(GameProcess.Difficulty.MEDIUM);
-
             JMenuBar menuBar = new JMenuBar();
+            frame.setJMenuBar(menuBar);
+
             JMenu gameMenu = new JMenu("Игра");
+            menuBar.add(gameMenu);
+
             gameMenu.add(new JMenuItem("Новая"));
             gameMenu.addSeparator();
 
             JMenu difficultyMenu = new JMenu("Сложность");
-            for(GameProcess.Difficulty difficulty : game.getVariantsOfDifficulty()) {
+            for (Difficulty difficulty : getVariantsOfDifficulty()) {
                 JMenuItem difficultySetting = new JMenuItem(difficulty.getName());
                 //difficultySetting.addActionListener(event -> game.setNewDifficulty(difficulty));
                 difficultyMenu.add(difficultySetting);
@@ -32,15 +38,9 @@ public class MineSweeperGUI {
             exit.addActionListener(event -> System.exit(0));
             gameMenu.add(exit);
 
-            menuBar.add(gameMenu);
-            frame.setJMenuBar(menuBar);
-
             JPanel gamePanel = new JPanel();
             gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.PAGE_AXIS));
             frame.add(gamePanel, BorderLayout.CENTER);
-
-            int start = game.getOpenedTiles().size() - 1;
-            game.getMineField().setMines(start);
 
             JPanel infoPanel = new JPanel();
             infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
@@ -49,72 +49,69 @@ public class MineSweeperGUI {
             JLabel minesBalanceLabel = new JLabel("Mines");
             infoPanel.add(minesBalanceLabel);
             infoPanel.add(Box.createHorizontalGlue());
-            JButton resetButton = new JButton("Reset");
-            infoPanel.add(resetButton);
+            JLabel infoLabel = new JLabel();
+            infoPanel.add(infoLabel);
             infoPanel.add(Box.createHorizontalGlue());
             JLabel timeLabel = new JLabel("Time");
             infoPanel.add(timeLabel);
 
-            GridLayout fieldGridLayout = new GridLayout(game.getMineField().getHeight(), game.getMineField().getWidth() - 1);
-
+            GridLayout fieldGridLayout = new GridLayout(defaultDifficulty.getFieldHeight(), defaultDifficulty.getFieldWidth() - 1);
             JPanel fieldPanel = new JPanel();
             fieldPanel.setLayout(fieldGridLayout);
             gamePanel.add(fieldPanel);
 
             ArrayList<JButton> fieldButtonsArray = new ArrayList<>();
 
-            for (int i = 0; i < game.getOpenedTiles().size(); ++i) {
+            for (int i = 0; i < defaultDifficulty.getFieldSize(); ++i) {
                 JButton button = new JButton();
-
                 fieldButtonsArray.add(button);
+
                 fieldPanel.add(button);
 
                 button.setPreferredSize(new Dimension(20, 20));
                 button.setMargin(new Insets(0, 0, 0, 0));
                 button.setFocusPainted(false);
-
-                button.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        int clickedIndex = fieldButtonsArray.indexOf(button);
-
-                        if (SwingUtilities.isRightMouseButton(e)) {
-                            if (!game.isOpen(clickedIndex)) {
-                                if (game.setFlag(clickedIndex)) {
-                                    button.setText("F");
-                                } else {
-                                    button.setText("");
-                                }
-                            }
-                        } else {
-                            if (!game.isFlag(clickedIndex)) {
-
-                                for (Integer i : game.openTilesFrom(clickedIndex)){
-                                    Tile selectedTile = game.getMineField().getTile(i);
-
-                                    if (selectedTile.isMine()) {
-                                        fieldButtonsArray.get(i).setText("X");
-                                        fieldButtonsArray.get(i).setBackground(Color.RED);
-                                        button.setEnabled(false);
-                                    } else {
-                                        int numberOfAdjacentMines = selectedTile.getNumberOfAdjacentMines();
-
-                                        if (numberOfAdjacentMines != 0) {
-                                            fieldButtonsArray.get(i).setText(String.valueOf(numberOfAdjacentMines));
-                                        } else {
-                                            fieldButtonsArray.get(i).setEnabled(false);
-                                        }
-                                        fieldButtonsArray.get(i).setBackground(Color.WHITE);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
             }
 
             frame.pack();
             frame.setLocationRelativeTo(null);
+
+            GameProcess game = new GameProcess(defaultDifficulty);
+
+            //TODO убрать это
+            int start = game.getOpenedTiles().size() - 1;
+            game.getMineField().setMines(start);
+
+            fieldButtonsArray.forEach(button -> button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    int clickedIndex = fieldButtonsArray.indexOf(button);
+
+                    HashMap<Integer, String> tilesForChange = new HashMap<>();
+
+                    //HashMap<Integer, TileState> tilesForChanges = new HashMap<>();
+
+                    if (SwingUtilities.isRightMouseButton(e)) {
+                        tilesForChange = game.markTile(clickedIndex);
+                    } else {
+                        tilesForChange = game.openTiles(clickedIndex);
+                    }
+
+                    for (Integer index : tilesForChange.keySet()) {
+                        String textForButton = tilesForChange.get(index);
+
+                        fieldButtonsArray.get(index).setText(textForButton);
+
+                        if (textForButton.equals("")) {
+                            fieldButtonsArray.get(index).setBackground(Color.WHITE);
+                        }
+                    }
+
+
+
+                    //TODO добавить код проверки победы/поражения
+                }
+            }));
         });
     }
 }

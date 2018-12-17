@@ -7,14 +7,14 @@ import java.util.Random;
 public class MineField {
     private Tile[] field;
     private int width;
-    private int height;
+    //private int height;
     private BitSet mines;
     private int totalNumberOfMines;
 
     public MineField(int width, int height, int totalNumberOfMines) {
         field = new Tile[width * height];
         this.width = width;
-        this.height = height;
+        //this.height = height;
         mines = new BitSet(width * height);
         this.totalNumberOfMines = totalNumberOfMines;
 
@@ -23,13 +23,13 @@ public class MineField {
         }
     }
 
-    public int getWidth() {
+    /*public int getWidth() {
         return width;
     }
 
     public int getHeight() {
         return height;
-    }
+    }*/
 
     public Tile[] getField() {
         return field;
@@ -43,13 +43,9 @@ public class MineField {
         mines.set(startIndex);
         getIndexesOfNeighbors(startIndex).forEach(mines::set);
 
-        /*for (Tile neighbor : getNeighbors(startIndex)) {
-            mines.set(startIndex);
-        }*/
-
         Random random = new Random();
-
         int minesCounter = 0;
+
         while (minesCounter < totalNumberOfMines) {
             int randomPosition = random.nextInt(field.length);
 
@@ -62,10 +58,6 @@ public class MineField {
 
         mines.flip(startIndex);
         getIndexesOfNeighbors(startIndex).forEach(mines::flip);
-        /*
-        for (Tile neighbor : getNeighbors(startIndex)) {
-            mines.flip(startIndex);
-        }*/
 
         for (int i = mines.nextSetBit(0); i >= 0; i = mines.nextSetBit(i + 1)) {
             for (Tile neighbor : getNeighbors(i)) {
@@ -84,6 +76,52 @@ public class MineField {
                 }
             }
         }*/
+    }
+
+    private boolean checkAdjacentFlags(int index) {
+        Tile[] neighbors = getNeighbors(index);
+
+        int flagsAndMinesCounter = 0;
+
+        for (Tile neighbor : neighbors) {
+            if (!neighbor.isOpened() && neighbor.isFlag()) {
+                ++flagsAndMinesCounter;
+            }
+        }
+
+        return flagsAndMinesCounter == field[index].getNumberOfAdjacentMines();
+    }
+
+    public ArrayList<Integer> openTilesFrom(int index) {
+        ArrayList<Integer> tilesForOpen = new ArrayList<>();
+
+        if (field[index].isOpened()) {
+            if (field[index].getNumberOfAdjacentMines() != 0 && checkAdjacentFlags(index)) {
+                for (int indexOfNeighbor : getIndexesOfNeighbors(index)) {
+                    if (!field[indexOfNeighbor].isOpened() && !field[indexOfNeighbor].isFlag()) {
+                        tilesForOpen.add(indexOfNeighbor);
+                    }
+                }
+            }
+        } else {
+            tilesForOpen.add(index);
+        }
+
+        for (int i = 0; i < tilesForOpen.size(); ++i) {
+            int indexOfTile = tilesForOpen.get(i);
+
+            if (field[indexOfTile].getNumberOfAdjacentMines() == 0) {
+                for (int indexOfNeighbor : getIndexesOfNeighbors(indexOfTile)) {
+                    if (!field[indexOfNeighbor].isOpened() && !field[indexOfNeighbor].isFlag()) {
+                        tilesForOpen.add(indexOfNeighbor);
+                    }
+                }
+            }
+
+            field[indexOfTile].open();
+        }
+
+        return tilesForOpen;
     }
 
     public Tile[] getNeighbors(int index) {

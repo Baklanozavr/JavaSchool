@@ -15,22 +15,19 @@ class Tile {
 
     void setMine() {
         isMine = true;
-        numberOfAdjacentMines = -1;
+        //numberOfAdjacentMines = -1; //TODO зачем это?
     }
 
     boolean isMine() {
         return isMine;
     }
 
-    boolean setFlag() {
-        if (isFlag) {
-            return isFlag = false;
-        } else {
-            return isFlag = true;
-        }
+    boolean markTile() {
+        isFlag = !isFlag;
+        return isFlag;
     }
 
-    boolean isFlag() {
+    boolean isMarked() {
         return isFlag;
     }
 
@@ -48,5 +45,17 @@ class Tile {
 
     int getNumberOfAdjacentMines() {
         return numberOfAdjacentMines;
+    }
+
+    void clear() {
+        isMine = false;
+        isFlag = false;
+        isOpened = false;
+        numberOfAdjacentMines = 0;
+    }
+
+    void removeMine() {
+        isMine = false;
+        //numberOfAdjacentMines = 0;
     }
 }

@@ -1,139 +1,95 @@
 package ru.academits.baklanov.minesweeper;
 
 import java.util.ArrayList;
-import java.util.BitSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 class MineField {
-    private Tile[] field;
+    private Tile[][] field;
     private int width;
-    private BitSet mines;
+    private int height;
+    private int fieldSize; //TODO это вообще надо???
     private int totalNumberOfMines;
 
     MineField(int width, int height, int totalNumberOfMines) {
-        field = new Tile[width * height];
+        field = new Tile[height][width];
         this.width = width;
-        mines = new BitSet(width * height);
+        this.height = height;
+        fieldSize = width * height;
         this.totalNumberOfMines = totalNumberOfMines;
 
-        for (int i = 0; i < field.length; ++i) {
-            field[i] = new Tile();
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                field[i][j] = new Tile();
+            }
         }
     }
 
-    Tile getTile(int index) {
-        return field[index];
+    Tile getTile(int i, int j) {
+        return field[i][j];
     }
 
-    void setMines(int startIndex) {
-        mines.set(startIndex);
-        getIndexesOfNeighbors(startIndex).forEach(mines::set);
+    void setMines(int iStart, int jStart) {
+        field[iStart][jStart].setMine();
+        getNeighbors(iStart, jStart).forEach(Tile::setMine);
 
         Random random = new Random();
         int minesCounter = 0;
 
         while (minesCounter < totalNumberOfMines) {
-            int randomPosition = random.nextInt(field.length);
+            Tile randomTile = field[random.nextInt(height)][random.nextInt(width)];
 
-            if (!mines.get(randomPosition)) {
-                mines.set(randomPosition);
-                field[randomPosition].setMine();
+            if (!randomTile.isMine()) {
+                randomTile.setMine();
                 ++minesCounter;
             }
         }
 
-        mines.flip(startIndex);
-        getIndexesOfNeighbors(startIndex).forEach(mines::flip);
+        field[iStart][jStart].removeMine();
+        getNeighbors(iStart, jStart).forEach(Tile::removeMine);
 
-        for (int i = mines.nextSetBit(0); i >= 0; i = mines.nextSetBit(i + 1)) {
-            for (Tile neighbor : getNeighbors(i)) {
-                if (!neighbor.isMine()) {
-                    neighbor.addAdjacentMine();
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                if (field[i][j].isMine()) {
+                    getNeighbors(i, j).forEach(Tile::addAdjacentMine);
                 }
             }
         }
-
-        /*for (int i = 0; i < field.length; ++i) {
-            if (field[i].isMine()) {
-                for (Tile neighbor : getNeighbors(i)) {
-                    if (!neighbor.isMine()) {
-                        neighbor.addAdjacentMine();
-                    }
-                }
-            }
-        }*/
     }
 
-    ArrayList<Integer> getIndexesOfNeighbors(int index) {
-        if (index < 0 || index > field.length) {
+    HashMap<Integer, HashSet<Integer>> getIndexesOfNeighbors(int i, int j) {
+        if (i < 0 || i >= height || j < 0 || j >= width) {
             throw new IllegalArgumentException("Выход за пределы поля!");
         }
 
-        int[] candidates = {index - width - 1, index - width, index - width + 1,
-                index - 1, index + 1, index + width - 1, index + width, index + width + 1};
+        HashMap<Integer, HashSet<Integer>> indexesOfNeighbors = new HashMap<>();
 
-        if (index % width == 0) {
-            candidates[0] = -1;
-            candidates[3] = -1;
-            candidates[5] = -1;
-        }
+        for (int m = i - 1; m <= i + 1; ++m) {
+            if (m >= 0 && m < height) {
+                HashSet<Integer> horizontalIndexes = new HashSet<>();
 
-        if ((index + 1) % width == 0) {
-            candidates[2] = -1;
-            candidates[4] = -1;
-            candidates[7] = -1;
-        }
+                for (int n = j - 1; n <= j + 1; ++n) {
+                    if (n >= 0 && n < width) {
+                        horizontalIndexes.add(n);
+                    }
+                }
 
-        ArrayList<Integer> indexesOfNeighbors = new ArrayList<>();
-
-        for (int i : candidates) {
-            if (i >= 0 && i < field.length) {
-                indexesOfNeighbors.add(i);
+                indexesOfNeighbors.put(m, horizontalIndexes);
             }
         }
 
         return indexesOfNeighbors;
     }
 
-    Tile[] getNeighbors(int index) {
-        if (index < 0 || index > field.length) {
-            throw new IllegalArgumentException("Выход за пределы поля!");
-        }
+    ArrayList<Tile> getNeighbors(int i, int j) {
+        ArrayList<Tile> neighbors = new ArrayList<>();
 
-        int[] candidates = {index - width - 1, index - width, index - width + 1,
-                index - 1, index + 1, index + width - 1, index + width, index + width + 1};
+        HashMap<Integer, HashSet<Integer>> indexesOfNeighbors = getIndexesOfNeighbors(i, j);
 
-        if (index % width == 0) {
-            candidates[0] = -1;
-            candidates[3] = -1;
-            candidates[5] = -1;
-        }
-
-        if (index % width == width - 1) {
-            candidates[2] = -1;
-            candidates[4] = -1;
-            candidates[7] = -1;
-        }
-
-        int neighborsCounter = 0;
-
-        for (int i = 0; i < candidates.length; ++i) {
-            if (candidates[i] >= 0 && candidates[i] < field.length) {
-                ++neighborsCounter;
-            } else {
-                candidates[i] = -1;
-            }
-        }
-
-        Tile[] neighbors = new Tile[neighborsCounter];
-        neighborsCounter = 0;
-
-        for (int i : candidates) {
-            if (i >= 0) {
-                neighbors[neighborsCounter] = field[i];
-                ++neighborsCounter;
-            }
-        }
+        indexesOfNeighbors.keySet().forEach(verticalIndex ->
+                indexesOfNeighbors.get(verticalIndex).forEach(horizontalIndex ->
+                        neighbors.add(field[verticalIndex][horizontalIndex])));
 
         return neighbors;
     }

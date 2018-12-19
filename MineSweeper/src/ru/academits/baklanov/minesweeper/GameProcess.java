@@ -1,12 +1,13 @@
 package ru.academits.baklanov.minesweeper;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class GameProcess {
-    private MineField mineField;
-    private int openedTilesCounter;
-    private boolean isFail;
     private Difficulty difficulty;
+    private MineField mineField;
+    private boolean isFail;
+    private int openedTilesCounter;
 
     public enum Difficulty {
         EASY(8, 8, 10, "Новичок"),
@@ -93,90 +94,102 @@ public class GameProcess {
             }
         }
 
-        if (tile.isFlag() && !tile.isMine()) {
+        if (tile.isMarked() && !tile.isMine()) {
             return TileGameState.ERROR_MINE;
         }
 
         return TileGameState.MINE;
     }
 
-    private boolean checkAdjacentFlags(int index) {
-        Tile[] neighbors = mineField.getNeighbors(index);
+    private boolean checkAdjacentFlags(int i, int j) {
+        ArrayList<Tile> neighbors = mineField.getNeighbors(i, j);
 
         int flagsAndMinesCounter = 0;
 
         for (Tile neighbor : neighbors) {
-            if (!neighbor.isOpened() && neighbor.isFlag()) {
+            if (!neighbor.isOpened() && neighbor.isMarked()) {
                 ++flagsAndMinesCounter;
             }
         }
 
-        return flagsAndMinesCounter == mineField.getTile(index).getNumberOfAdjacentMines();
-    }
-
-    private ArrayList<Integer> openTilesFrom(int index) {
-        ArrayList<Integer> tilesForOpen = new ArrayList<>();
-
-        if (mineField.getTile(index).isOpened()) {
-            if (checkAdjacentFlags(index)) {
-                for (int indexOfNeighbor : mineField.getIndexesOfNeighbors(index)) {
-                    Tile neighbor = mineField.getTile(indexOfNeighbor);
-
-                    if (!neighbor.isOpened() && !neighbor.isFlag()) {
-                        tilesForOpen.add(indexOfNeighbor);
-                    }
-                }
-            }
-        } else {
-            tilesForOpen.add(index);
-        }
-
-        for (int i = 0; i < tilesForOpen.size(); ++i) {
-            int indexOfTile = tilesForOpen.get(i);
-
-            if (mineField.getTile(indexOfTile).getNumberOfAdjacentMines() == 0) {
-                for (int indexOfNeighbor : mineField.getIndexesOfNeighbors(indexOfTile)) {
-                    Tile neighbor = mineField.getTile(indexOfNeighbor);
-
-                    if (!neighbor.isOpened() && !neighbor.isFlag()) {
-                        tilesForOpen.add(indexOfNeighbor);
-                    }
-                }
-            }
-
-            mineField.getTile(indexOfTile).open();
-        }
-
-        HashSet<Integer> openedTiles = new HashSet<>(tilesForOpen);
-
-        openedTilesCounter += openedTiles.size();
-
-        return new ArrayList<>(openedTiles);
+        return flagsAndMinesCounter == mineField.getTile(i, j).getNumberOfAdjacentMines();
     }
 
     public Boolean markTile(int clickedIndex) {
-        if (mineField.getTile(clickedIndex).isOpened()) {
+        int verticalIndex = clickedIndex / difficulty.fieldWidth;
+        int horizontalIndex = clickedIndex % difficulty.fieldWidth;
+
+        Tile clickedTile = mineField.getTile(verticalIndex, horizontalIndex);
+
+        if (clickedTile.isOpened()) {
             return null;
         }
 
-        return mineField.getTile(clickedIndex).setFlag();
+        return clickedTile.markTile();
     }
 
     public HashMap<Integer, TileGameState> openTiles(int clickedIndex) {
-        if (openedTilesCounter == 0) {
-            mineField.setMines(clickedIndex);
-        }
+        int verticalStartIndex = clickedIndex / difficulty.fieldWidth;
+        int horizontalStartIndex = clickedIndex % difficulty.fieldWidth;
 
         HashMap<Integer, TileGameState> tilesForChange = new HashMap<>();
 
-        if (!mineField.getTile(clickedIndex).isFlag()) {
-            ArrayList<Integer> tilesForOpen = openTilesFrom(clickedIndex);
+        if (!mineField.getTile(verticalStartIndex, horizontalStartIndex).isMarked()) {
+            if (openedTilesCounter == 0) {
+                mineField.setMines(verticalStartIndex, horizontalStartIndex);
+            }
 
-            for (Integer i : tilesForOpen) {
-                Tile selectedTile = mineField.getTile(i);
+            Queue<Integer> indexesForOpen = new LinkedList<>();
+            HashSet<Integer> visitedIndexes = new HashSet<>();
+
+            BiConsumer<Integer, HashSet<Integer>> addNeighbors = (verticalIndex, horizontalIndexes) -> {
+                horizontalIndexes.forEach(j -> {
+                    Tile neighbor = mineField.getTile(verticalIndex, j);
+
+                    if (!neighbor.isOpened() && !neighbor.isMarked()) {
+                        int newIndex = verticalIndex * difficulty.fieldWidth + j;
+
+                        if (visitedIndexes.add(newIndex)) {
+                            indexesForOpen.add(newIndex);
+                        }
+                    }
+                });
+            };
+
+            if (mineField.getTile(verticalStartIndex, horizontalStartIndex).isOpened()) {
+                if (checkAdjacentFlags(verticalStartIndex, horizontalStartIndex)) {
+                    mineField.getIndexesOfNeighbors(verticalStartIndex, horizontalStartIndex).forEach(addNeighbors);
+                }
+            } else {
+                visitedIndexes.add(clickedIndex);
+                indexesForOpen.add(clickedIndex);
+            }
+
+            Integer index = indexesForOpen.poll();
+            while (index != null) {
+                int verticalIndex = index / difficulty.fieldWidth;
+                int horizontalIndex = index % difficulty.fieldWidth;
+
+                Tile selectedTile = mineField.getTile(verticalIndex, horizontalIndex);
+                selectedTile.open();
+
+                if (selectedTile.getNumberOfAdjacentMines() == 0) {
+                    mineField.getIndexesOfNeighbors(verticalIndex, horizontalIndex).forEach(addNeighbors);
+                }
+
+                index = indexesForOpen.poll();
+            }
+
+            for (Integer i : visitedIndexes) {
+                int verticalIndex = i / difficulty.fieldWidth;
+                int horizontalIndex = i % difficulty.fieldWidth;
+
+                Tile selectedTile = mineField.getTile(verticalIndex, horizontalIndex);
 
                 tilesForChange.put(i, getTileGameState(selectedTile));
             }
+
+            openedTilesCounter += visitedIndexes.size();
         }
 
         return tilesForChange;
@@ -187,6 +200,6 @@ public class GameProcess {
     }
 
     public boolean isVictory() {
-        return !isFail && openedTilesCounter == difficulty.getFieldSize() - difficulty.getTotalNumberOfMines();
+        return !isFail && openedTilesCounter == difficulty.getFieldSize() - difficulty.totalNumberOfMines;
     }
 }

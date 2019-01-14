@@ -7,32 +7,36 @@ class Tile {
     private int numberOfAdjacentMines;
 
     Tile() {
-        isMine = false;
-        isFlag = false;
-        isOpened = false;
-        numberOfAdjacentMines = 0;
+        clear();
     }
 
     void setMine() {
         isMine = true;
-        //numberOfAdjacentMines = -1; //TODO зачем это?
+    }
+
+    void removeMine() {
+        isMine = false;
     }
 
     boolean isMine() {
         return isMine;
     }
 
-    boolean markTile() {
-        isFlag = !isFlag;
+    boolean setFlag() {
+        if (!isOpened) {
+            isFlag = !isFlag;
+        }
         return isFlag;
     }
 
-    boolean isMarked() {
+    boolean isFlag() {
         return isFlag;
     }
 
     void open() {
-        isOpened = true;
+        if (!isFlag) {
+            isOpened = true;
+        }
     }
 
     boolean isOpened() {
@@ -52,10 +56,5 @@ class Tile {
         isFlag = false;
         isOpened = false;
         numberOfAdjacentMines = 0;
-    }
-
-    void removeMine() {
-        isMine = false;
-        //numberOfAdjacentMines = 0;
     }
 }

@@ -4,10 +4,13 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 public class GameProcess {
+    private static Difficulty defaultDifficulty = Difficulty.MEDIUM;
+
     private Difficulty difficulty;
     private MineField mineField;
     private boolean isFail;
     private int openedTilesCounter;
+    private int leftMinesCounter;
 
     public enum Difficulty {
         EASY(8, 8, 10, "Новичок"),
@@ -58,12 +61,21 @@ public class GameProcess {
 
         mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
         openedTilesCounter = 0;
+        leftMinesCounter = difficulty.totalNumberOfMines;
         isFail = false;
         this.difficulty = difficulty;
     }
 
+    public GameProcess() {
+        this(defaultDifficulty);
+    }
+
     public static Difficulty[] getVariantsOfDifficulty() {
         return Difficulty.values();
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 
     private TileGameState getTileGameState(Tile tile) {
@@ -94,7 +106,7 @@ public class GameProcess {
             }
         }
 
-        if (tile.isMarked() && !tile.isMine()) {
+        if (tile.isFlag() && !tile.isMine()) {
             return TileGameState.ERROR_MINE;
         }
 
@@ -107,7 +119,7 @@ public class GameProcess {
         int flagsAndMinesCounter = 0;
 
         for (Tile neighbor : neighbors) {
-            if (!neighbor.isOpened() && neighbor.isMarked()) {
+            if (!neighbor.isOpened() && neighbor.isFlag()) {
                 ++flagsAndMinesCounter;
             }
         }
@@ -125,7 +137,15 @@ public class GameProcess {
             return null;
         }
 
-        return clickedTile.markTile();
+        boolean isMarked = clickedTile.setFlag();
+
+        if (isMarked) {
+            --leftMinesCounter;
+        } else {
+            ++leftMinesCounter;
+        }
+
+        return isMarked;
     }
 
     public HashMap<Integer, TileGameState> openTiles(int clickedIndex) {
@@ -134,7 +154,7 @@ public class GameProcess {
 
         HashMap<Integer, TileGameState> tilesForChange = new HashMap<>();
 
-        if (!mineField.getTile(verticalStartIndex, horizontalStartIndex).isMarked()) {
+        if (!mineField.getTile(verticalStartIndex, horizontalStartIndex).isFlag()) {
             if (openedTilesCounter == 0) {
                 mineField.setMines(verticalStartIndex, horizontalStartIndex);
             }
@@ -146,7 +166,7 @@ public class GameProcess {
                 horizontalIndexes.forEach(j -> {
                     Tile neighbor = mineField.getTile(verticalIndex, j);
 
-                    if (!neighbor.isOpened() && !neighbor.isMarked()) {
+                    if (!neighbor.isOpened() && !neighbor.isFlag()) {
                         int newIndex = verticalIndex * difficulty.fieldWidth + j;
 
                         if (visitedIndexes.add(newIndex)) {
@@ -201,5 +221,30 @@ public class GameProcess {
 
     public boolean isVictory() {
         return !isFail && openedTilesCounter == difficulty.getFieldSize() - difficulty.totalNumberOfMines;
+    }
+
+    public int getNumberOfMinesLeft() {
+        return leftMinesCounter;
+    }
+
+    public void restart() {
+        leftMinesCounter = difficulty.totalNumberOfMines;
+        openedTilesCounter = 0;
+        mineField.clear();
+        isFail = false;
+    }
+
+    public void restart(Difficulty difficulty) {
+        if (difficulty == this.difficulty) {
+            restart();
+        } else {
+            defaultDifficulty = difficulty;
+
+            this.difficulty = difficulty;
+            mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
+            openedTilesCounter = 0;
+            leftMinesCounter = difficulty.totalNumberOfMines;
+            isFail = false;
+        }
     }
 }

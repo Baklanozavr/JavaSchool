@@ -1,9 +1,6 @@
 package ru.academits.baklanov.minesweeper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 class MineField {
     private Tile[][] field;
@@ -92,5 +89,13 @@ class MineField {
                         neighbors.add(field[verticalIndex][horizontalIndex])));
 
         return neighbors;
+    }
+
+    void clear() {
+        for (Tile[] tiles : field) {
+            for (Tile tile : tiles) {
+                tile.clear();
+            }
+        }
     }
 }

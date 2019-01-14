@@ -1,4 +1,4 @@
-package ru.academits.baklanov.minesweeper;
+package ru.academits.baklanov.minesweeper.model;
 
 class Tile {
     private boolean isMine;

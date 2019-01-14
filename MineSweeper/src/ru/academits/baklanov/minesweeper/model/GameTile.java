@@ -1,14 +1,13 @@
-package ru.academits.baklanov.minesweeper;
+package ru.academits.baklanov.minesweeper.model;
 
-import ru.academits.baklanov.minesweeper.gui.GameTileUI;
+import ru.academits.baklanov.minesweeper.TileUI;
 
 public class GameTile extends Tile {
-    private State state;
-    private GameTileUI gameTileUI;
+    private TileUI tileUI;
 
-    public GameTile() {
+    GameTile() {
         super();
-        state = State.CLOSED;
+        tileUI = null;
     }
 
     public enum State {
@@ -18,20 +17,28 @@ public class GameTile extends Tile {
     @Override
     public void open() {
         super.open();
-        gameTileUI.update(getState());
+        tileUI.update(getState());
     }
 
     @Override
     public boolean setFlag() {
         boolean result = super.setFlag();
-        gameTileUI.update(getState());
+        if (result) {
+            tileUI.update(State.FLAG);
+        } else {
+            tileUI.update(State.CLOSED);
+        }
         return result;
     }
 
     public void showMine() {
         if (isMine() && !isOpened()) {
-            gameTileUI.update(State.MINE);
+            tileUI.update(State.MINE);
         }
+    }
+
+    public void registerUI(TileUI tileUI) {
+        this.tileUI = tileUI;
     }
 
     private State getState() {

@@ -1,17 +1,23 @@
 package ru.academits.baklanov.minesweeper.gui;
 
-import ru.academits.baklanov.minesweeper.GameTile;
+import ru.academits.baklanov.minesweeper.model.GameTile;
+import ru.academits.baklanov.minesweeper.TileUI;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class GameTileUI {
+public class TileGUI implements TileUI {
     private JButton tileButton;
 
-    public GameTileUI(JButton tileButton) {
+    TileGUI(JButton tileButton) {
         this.tileButton = tileButton;
+
+        tileButton.setPreferredSize(new Dimension(20, 20));
+        tileButton.setMargin(new Insets(0, 0, 0, 0));
+        tileButton.setFocusPainted(false);
     }
 
+    @Override
     public void update(GameTile.State state) {
         switch (state) {
             case CLOSED: {
@@ -22,6 +28,7 @@ public class GameTileUI {
             }
             case FLAG: {
                 tileButton.setText("F");
+                tileButton.setEnabled(false);
                 return;
             }
             case MINE: {
@@ -39,7 +46,6 @@ public class GameTileUI {
                 return;
             }
             case EMPTY: {
-                tileButton.setBackground(Color.WHITE);
                 break;
             }
             case ONE: {
@@ -72,8 +78,8 @@ public class GameTileUI {
             }
             case EIGHT: {
                 tileButton.setText("8");
-                break;
             }
         }
+        tileButton.setBackground(Color.WHITE);
     }
 }

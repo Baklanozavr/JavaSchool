@@ -1,4 +1,7 @@
-package ru.academits.baklanov.minesweeper;
+package ru.academits.baklanov.minesweeper.model;
+
+import ru.academits.baklanov.minesweeper.TileUI;
+import ru.academits.baklanov.minesweeper.gui.MineSweeperGUI;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -11,6 +14,10 @@ public class GameProcess {
     private boolean isFail;
     private int openedTilesCounter;
     private int leftMinesCounter;
+    private int timeInSeconds;
+    private Timer timer;
+
+    private MineSweeperGUI gameUI;
 
     public enum Difficulty {
         EASY(8, 8, 10, "Новичок"),
@@ -50,10 +57,6 @@ public class GameProcess {
         }
     }
 
-    public enum TileGameState {
-        MINE, ERROR_MINE, BOOMED_MINE, EMPTY, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT
-    }
-
     public GameProcess(Difficulty difficulty) {
         if (difficulty == null) {
             throw new NullPointerException("Сложность не установлена!");
@@ -61,9 +64,18 @@ public class GameProcess {
 
         mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
         openedTilesCounter = 0;
+        timeInSeconds = 0;
         leftMinesCounter = difficulty.totalNumberOfMines;
         isFail = false;
         this.difficulty = difficulty;
+
+        timer = new Timer();
+
+        gameUI = null;
+    }
+
+    public MineField getMineField() {
+        return mineField;
     }
 
     public GameProcess() {
@@ -76,41 +88,6 @@ public class GameProcess {
 
     public Difficulty getDifficulty() {
         return difficulty;
-    }
-
-    private TileGameState getTileGameState(Tile tile) {
-        if (tile.isOpened()) {
-            if (tile.isMine()) {
-                return TileGameState.BOOMED_MINE;
-            }
-
-            switch (tile.getNumberOfAdjacentMines()) {
-                case 0:
-                    return TileGameState.EMPTY;
-                case 1:
-                    return TileGameState.ONE;
-                case 2:
-                    return TileGameState.TWO;
-                case 3:
-                    return TileGameState.THREE;
-                case 4:
-                    return TileGameState.FOUR;
-                case 5:
-                    return TileGameState.FIVE;
-                case 6:
-                    return TileGameState.SIX;
-                case 7:
-                    return TileGameState.SEVEN;
-                case 8:
-                    return TileGameState.EIGHT;
-            }
-        }
-
-        if (tile.isFlag() && !tile.isMine()) {
-            return TileGameState.ERROR_MINE;
-        }
-
-        return TileGameState.MINE;
     }
 
     private boolean checkAdjacentFlags(int i, int j) {
@@ -127,15 +104,11 @@ public class GameProcess {
         return flagsAndMinesCounter == mineField.getTile(i, j).getNumberOfAdjacentMines();
     }
 
-    public Boolean markTile(int clickedIndex) {
+    public void markTile(int clickedIndex) {
         int verticalIndex = clickedIndex / difficulty.fieldWidth;
         int horizontalIndex = clickedIndex % difficulty.fieldWidth;
 
         Tile clickedTile = mineField.getTile(verticalIndex, horizontalIndex);
-
-        if (clickedTile.isOpened()) {
-            return null;
-        }
 
         boolean isMarked = clickedTile.setFlag();
 
@@ -145,18 +118,17 @@ public class GameProcess {
             ++leftMinesCounter;
         }
 
-        return isMarked;
+        gameUI.updateMinesBalance(leftMinesCounter);
     }
 
-    public HashMap<Integer, TileGameState> openTiles(int clickedIndex) {
+    public void openTile(int clickedIndex) {
         int verticalStartIndex = clickedIndex / difficulty.fieldWidth;
         int horizontalStartIndex = clickedIndex % difficulty.fieldWidth;
-
-        HashMap<Integer, TileGameState> tilesForChange = new HashMap<>();
 
         if (!mineField.getTile(verticalStartIndex, horizontalStartIndex).isFlag()) {
             if (openedTilesCounter == 0) {
                 mineField.setMines(verticalStartIndex, horizontalStartIndex);
+                startTimer();
             }
 
             Queue<Integer> indexesForOpen = new LinkedList<>();
@@ -200,19 +172,8 @@ public class GameProcess {
                 index = indexesForOpen.poll();
             }
 
-            for (Integer i : visitedIndexes) {
-                int verticalIndex = i / difficulty.fieldWidth;
-                int horizontalIndex = i % difficulty.fieldWidth;
-
-                Tile selectedTile = mineField.getTile(verticalIndex, horizontalIndex);
-
-                tilesForChange.put(i, getTileGameState(selectedTile));
-            }
-
             openedTilesCounter += visitedIndexes.size();
         }
-
-        return tilesForChange;
     }
 
     public boolean isFail() {
@@ -223,15 +184,18 @@ public class GameProcess {
         return !isFail && openedTilesCounter == difficulty.getFieldSize() - difficulty.totalNumberOfMines;
     }
 
-    public int getNumberOfMinesLeft() {
-        return leftMinesCounter;
-    }
-
     public void restart() {
         leftMinesCounter = difficulty.totalNumberOfMines;
         openedTilesCounter = 0;
         mineField.clear();
         isFail = false;
+
+        timeInSeconds = 0;
+        timer.cancel();
+        timer = new Timer();
+
+        gameUI.updateTime(timeInSeconds);
+        gameUI.updateMinesBalance(leftMinesCounter);
     }
 
     public void restart(Difficulty difficulty) {
@@ -246,5 +210,24 @@ public class GameProcess {
             leftMinesCounter = difficulty.totalNumberOfMines;
             isFail = false;
         }
+    }
+
+    public void registerUI(MineSweeperGUI gameUI) {
+        this.gameUI = gameUI;
+    }
+
+    public void registerTileUI(TileUI tileUI, int verticalIndex, int horizontalIndex) {
+        mineField.getTile(verticalIndex, horizontalIndex).registerUI(tileUI);
+    }
+
+    private void startTimer() {
+        timer.schedule(
+                new TimerTask() {
+                    public void run() {
+                        ++timeInSeconds;
+                        gameUI.updateTime(timeInSeconds);
+                    }
+                },
+                1000, 1000);
     }
 }

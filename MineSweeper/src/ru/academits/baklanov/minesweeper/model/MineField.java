@@ -1,29 +1,27 @@
-package ru.academits.baklanov.minesweeper;
+package ru.academits.baklanov.minesweeper.model;
 
 import java.util.*;
 
-class MineField {
-    private Tile[][] field;
+public class MineField {
+    private GameTile[][] field;
     private int width;
     private int height;
-    private int fieldSize; //TODO это вообще надо???
     private int totalNumberOfMines;
 
     MineField(int width, int height, int totalNumberOfMines) {
-        field = new Tile[height][width];
+        field = new GameTile[height][width];
         this.width = width;
         this.height = height;
-        fieldSize = width * height;
         this.totalNumberOfMines = totalNumberOfMines;
 
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
-                field[i][j] = new Tile();
+                field[i][j] = new GameTile();
             }
         }
     }
 
-    Tile getTile(int i, int j) {
+    public GameTile getTile(int i, int j) {
         return field[i][j];
     }
 

@@ -1,15 +1,16 @@
 package ru.academits.baklanov.minesweeper.gui;
 
-
-import ru.academits.baklanov.minesweeper.GameProcess.*;
-import ru.academits.baklanov.minesweeper.GameProcess;
+import ru.academits.baklanov.minesweeper.model.GameProcess.*;
+import ru.academits.baklanov.minesweeper.model.GameProcess;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static ru.academits.baklanov.minesweeper.GameProcess.getVariantsOfDifficulty;
+import static ru.academits.baklanov.minesweeper.model.GameProcess.getVariantsOfDifficulty;
 
 public class MineSweeperGUI implements Runnable {
+    private JLabel minesBalanceLabel;
+    private JLabel timeLabel;
     private GameProcess game;
     private JMenuBar menuBar;
     private MineFieldGUI mineFieldGUI;
@@ -19,10 +20,14 @@ public class MineSweeperGUI implements Runnable {
         game = new GameProcess();
         menuBar = new JMenuBar();
         mineFieldGUI = new MineFieldGUI(game);
+        minesBalanceLabel = new JLabel(String.valueOf(game.getDifficulty().getTotalNumberOfMines()));
+        timeLabel = new JLabel("0");
     }
 
     @Override
     public void run() {
+        game.registerUI(this);
+
         SwingUtilities.invokeLater(() -> {
             activateMenuBar();
 
@@ -40,13 +45,11 @@ public class MineSweeperGUI implements Runnable {
             infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
             gamePanel.add(infoPanel);
 
-            JLabel minesBalanceLabel = new JLabel("Mines");
             infoPanel.add(minesBalanceLabel);
             infoPanel.add(Box.createHorizontalGlue());
             JLabel infoLabel = new JLabel();
             infoPanel.add(infoLabel);
             infoPanel.add(Box.createHorizontalGlue());
-            JLabel timeLabel = new JLabel("Time");
             infoPanel.add(timeLabel);
 
             gamePanel.add(mineFieldGUI);
@@ -101,5 +104,13 @@ public class MineSweeperGUI implements Runnable {
         gameMenu.add(exit);
 
         menuBar.add(gameMenu);
+    }
+
+    public void updateMinesBalance(int numberOfMines) {
+        minesBalanceLabel.setText(String.valueOf(numberOfMines));
+    }
+
+    public void updateTime(int time) {
+        timeLabel.setText(String.valueOf(time));
     }
 }

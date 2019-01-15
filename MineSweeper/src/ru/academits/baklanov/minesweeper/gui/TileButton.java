@@ -19,6 +19,14 @@ public class TileButton extends JButton implements TileUI {
         setFocusPainted(false);
     }
 
+    int getVerticalIndex() {
+        return verticalIndex;
+    }
+
+    int getHorizontalIndex() {
+        return horizontalIndex;
+    }
+
     @Override
     public void update(GameTile.State state) {
         switch (state) {
@@ -38,7 +46,6 @@ public class TileButton extends JButton implements TileUI {
                 return;
             }
             case ERROR_MINE: {
-                //tileButton.setText("F");
                 setBackground(Color.RED);
                 return;
             }
@@ -48,6 +55,7 @@ public class TileButton extends JButton implements TileUI {
                 return;
             }
             case EMPTY: {
+                setEnabled(false);
                 break;
             }
             case ONE: {
@@ -83,13 +91,5 @@ public class TileButton extends JButton implements TileUI {
             }
         }
         setBackground(Color.WHITE);
-    }
-
-    int getVerticalIndex() {
-        return verticalIndex;
-    }
-
-    int getHorizontalIndex() {
-        return horizontalIndex;
     }
 }

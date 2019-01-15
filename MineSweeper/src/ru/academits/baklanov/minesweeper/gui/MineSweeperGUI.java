@@ -1,130 +1,123 @@
 package ru.academits.baklanov.minesweeper.gui;
 
-import ru.academits.baklanov.minesweeper.model.GameProcess.*;
+import ru.academits.baklanov.minesweeper.MineSweeperUI;
+import ru.academits.baklanov.minesweeper.model.GameProcess.Difficulty;
 import ru.academits.baklanov.minesweeper.model.GameProcess;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static ru.academits.baklanov.minesweeper.model.GameProcess.getVariantsOfDifficulty;
+public class MineSweeperGUI implements Runnable, MineSweeperUI {
+    private GameProcess game;
 
-public class MineSweeperGUI implements Runnable {
+    private JFrame gameFrame;
+    private JPanel gamePanel;
+    private JMenuBar menuBar;
+
     private JLabel minesBalanceLabel;
     private JLabel timeLabel;
     private JLabel infoLabel;
 
-    private JFrame gameFrame;
-    private JPanel gamePanel;
-
-    private GameProcess game;
-    private JMenuBar menuBar;
     private MineFieldGUI mineFieldGUI;
-    private boolean isNewGame;
 
     public MineSweeperGUI() {
         game = new GameProcess();
-        menuBar = new JMenuBar();
-        mineFieldGUI = new MineFieldGUI(game);
-        gamePanel = new JPanel();
 
         gameFrame = new JFrame("MineSweeper by Baklanozavr");
+        gamePanel = new JPanel();
+        menuBar = new JMenuBar();
 
         minesBalanceLabel = new JLabel(String.valueOf(game.getDifficulty().getTotalNumberOfMines()));
         timeLabel = new JLabel("0");
         infoLabel = new JLabel("Вперёд!");
+
+        mineFieldGUI = new MineFieldGUI(game);
     }
 
     @Override
     public void run() {
         game.registerUI(this);
 
-        SwingUtilities.invokeLater(() -> {
-            activateMenuBar();
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
+        infoPanel.add(minesBalanceLabel);
+        infoPanel.add(Box.createHorizontalGlue());
+        infoPanel.add(infoLabel);
+        infoPanel.add(Box.createHorizontalGlue());
+        infoPanel.add(timeLabel);
 
-            gameFrame.setVisible(true);
-            gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.PAGE_AXIS));
+        gamePanel.add(infoPanel);
+        gamePanel.add(mineFieldGUI);
 
-            gameFrame.setJMenuBar(menuBar);
+        menuBar.add(createMenuBar());
 
-            gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.PAGE_AXIS));
-            gameFrame.add(gamePanel, BorderLayout.CENTER);
+        gameFrame.setJMenuBar(menuBar);
+        gameFrame.add(gamePanel, BorderLayout.CENTER);
+        gameFrame.setVisible(true);
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            JPanel infoPanel = new JPanel();
-            infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
-            gamePanel.add(infoPanel);
-
-            infoPanel.add(minesBalanceLabel);
-            infoPanel.add(Box.createHorizontalGlue());
-
-            infoPanel.add(infoLabel);
-            infoPanel.add(Box.createHorizontalGlue());
-            infoPanel.add(timeLabel);
-
-            gamePanel.add(mineFieldGUI);
-
-            gameFrame.pack();
-            gameFrame.setLocationRelativeTo(null);
-
-            //тут что-то планировалось
-            if (isNewGame) {
-                gamePanel.removeAll();
-                gamePanel.add(mineFieldGUI);
-                gameFrame.pack();
-            }
-
-            if (game.isVictory()) {
-                //fieldButtonsArray.forEach(JButton::removeAll);
-                infoLabel.setText("Победа!");
-            }
-        });
+        gameFrame.pack();
+        gameFrame.setLocationRelativeTo(null);
     }
 
-    private void activateMenuBar() {
+    private JMenu createMenuBar() {
         JMenu gameMenu = new JMenu("Игра");
 
         JMenuItem newGame = new JMenuItem("Новая");
-        newGame.addActionListener(event -> {
-            infoLabel.setText("Новая игра");
-            game.restart();
-        });
         gameMenu.add(newGame);
         gameMenu.addSeparator();
 
         JMenu difficultyMenu = new JMenu("Сложность");
-        for (Difficulty difficulty : getVariantsOfDifficulty()) {
-            JMenuItem difficultySetting = new JMenuItem(difficulty.getName());
-            difficultySetting.addActionListener(event -> {
-                infoLabel.setText("Новая игра");
-                game.restart(difficulty);
-
-                gamePanel.remove(mineFieldGUI);
-                mineFieldGUI = new MineFieldGUI(game);
-                gamePanel.add(mineFieldGUI);
-
-                gameFrame.pack();
-                gameFrame.setLocationRelativeTo(null);
-
-            });
-            difficultyMenu.add(difficultySetting);
-        }
         gameMenu.add(difficultyMenu);
         gameMenu.addSeparator();
 
         JMenuItem exit = new JMenuItem("Выйти");
-        exit.addActionListener(event -> System.exit(0));
         gameMenu.add(exit);
 
-        menuBar.add(gameMenu);
+        for (Difficulty difficulty : Difficulty.values()) {
+            JMenuItem difficultySetting = new JMenuItem(difficulty.getName());
+
+            difficultySetting.addActionListener(event -> restartGame(difficulty));
+
+            difficultyMenu.add(difficultySetting);
+        }
+        newGame.addActionListener(event -> restartGame(game.getDifficulty()));
+        exit.addActionListener(event -> System.exit(0));
+
+        return gameMenu;
     }
 
+    private void restartGame(Difficulty difficulty) {
+        Difficulty oldDifficulty = game.getDifficulty();
+
+        game.restart(difficulty);
+
+        minesBalanceLabel.setText(String.valueOf(difficulty.getTotalNumberOfMines()));
+        infoLabel.setText("Новая игра");
+        timeLabel.setText("0");
+
+        if (oldDifficulty != difficulty) {
+            gamePanel.remove(mineFieldGUI);
+            mineFieldGUI = new MineFieldGUI(game);
+            gamePanel.add(mineFieldGUI);
+
+            gameFrame.pack();
+            gameFrame.setLocationRelativeTo(null);
+        }
+    }
+
+    @Override
     public void updateMinesBalance(int numberOfMines) {
         minesBalanceLabel.setText(String.valueOf(numberOfMines));
     }
 
+    @Override
     public void updateTime(int time) {
         timeLabel.setText(String.valueOf(time));
     }
 
+    @Override
     public void updateGameState(boolean isVictory) {
         if (isVictory) {
             infoLabel.setText("Победа!");

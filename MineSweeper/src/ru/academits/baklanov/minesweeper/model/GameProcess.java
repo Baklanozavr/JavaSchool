@@ -1,7 +1,7 @@
 package ru.academits.baklanov.minesweeper.model;
 
 import ru.academits.baklanov.minesweeper.TileUI;
-import ru.academits.baklanov.minesweeper.gui.MineSweeperGUI;
+import ru.academits.baklanov.minesweeper.MineSweeperUI;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -18,7 +18,7 @@ public class GameProcess {
     private int timeInSeconds;
     private Timer timer;
 
-    private MineSweeperGUI gameUI;
+    private MineSweeperUI gameUI;
 
     public enum Difficulty {
         EASY(8, 8, 10, "Новичок"),
@@ -70,10 +70,6 @@ public class GameProcess {
 
     public GameProcess() {
         this(defaultDifficulty);
-    }
-
-    public static Difficulty[] getVariantsOfDifficulty() {
-        return Difficulty.values();
     }
 
     public Difficulty getDifficulty() {
@@ -173,7 +169,7 @@ public class GameProcess {
         }
     }
 
-    public boolean isVictory() {
+    private boolean isVictory() {
         return !isFail && openedTilesCounter == difficulty.getFieldSize() - difficulty.totalNumberOfMines;
     }
 
@@ -185,15 +181,6 @@ public class GameProcess {
         timer = new Timer();
     }
 
-    public void restart() {
-        timer.cancel();
-
-        setStartValues();
-
-        gameUI.updateTime(timeInSeconds);
-        gameUI.updateMinesBalance(leftMinesCounter);
-    }
-
     public void restart(Difficulty difficulty) {
         if (difficulty == null) {
             throw new NullPointerException("Сложность не установлена!");
@@ -201,15 +188,16 @@ public class GameProcess {
 
         if (difficulty == this.difficulty) {
             mineField.clear();
-            restart();
         } else {
             this.difficulty = difficulty;
             mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
-            restart();
         }
+
+        timer.cancel();
+        setStartValues();
     }
 
-    public void registerUI(MineSweeperGUI gameUI) {
+    public void registerUI(MineSweeperUI gameUI) {
         this.gameUI = gameUI;
     }
 

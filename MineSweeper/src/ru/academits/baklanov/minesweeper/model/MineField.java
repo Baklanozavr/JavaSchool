@@ -2,17 +2,18 @@ package ru.academits.baklanov.minesweeper.model;
 
 import java.util.*;
 
-public class MineField {
+class MineField {
     private GameTile[][] field;
     private int width;
     private int height;
     private int totalNumberOfMines;
 
     MineField(int width, int height, int totalNumberOfMines) {
-        field = new GameTile[height][width];
         this.width = width;
         this.height = height;
         this.totalNumberOfMines = totalNumberOfMines;
+
+        field = new GameTile[height][width];
 
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
@@ -21,7 +22,7 @@ public class MineField {
         }
     }
 
-    public GameTile getTile(int i, int j) {
+    GameTile getTile(int i, int j) {
         return field[i][j];
     }
 
@@ -53,7 +54,7 @@ public class MineField {
         }
     }
 
-    HashMap<Integer, HashSet<Integer>> getIndexesOfNeighbors(int i, int j) {
+    private HashMap<Integer, HashSet<Integer>> getIndexesOfNeighbors(int i, int j) {
         if (i < 0 || i >= height || j < 0 || j >= width) {
             throw new IllegalArgumentException("Выход за пределы поля!");
         }
@@ -89,10 +90,29 @@ public class MineField {
         return neighbors;
     }
 
+    ArrayList<Tile> getNeighbors(Tile tile) {
+        for(int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                if (Objects.equals(tile, field[i][j])) {
+                    return getNeighbors(i, j);
+                }
+            }
+        }
+        return null;
+    }
+
     void clear() {
         for (Tile[] tiles : field) {
             for (Tile tile : tiles) {
                 tile.clear();
+            }
+        }
+    }
+
+    void showMines() {
+        for(int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                field[i][j].showMine();
             }
         }
     }

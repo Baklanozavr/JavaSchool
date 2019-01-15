@@ -15,6 +15,12 @@ public class GameTile extends Tile {
     }
 
     @Override
+    public void clear() {
+        super.clear();
+        tileUI.update(getState());
+    }
+
+    @Override
     public void open() {
         super.open();
         tileUI.update(getState());
@@ -28,22 +34,28 @@ public class GameTile extends Tile {
         } else {
             tileUI.update(State.CLOSED);
         }
+
         return result;
     }
 
-    public void showMine() {
+    void showMine() {
         if (isMine() && !isOpened()) {
             tileUI.update(State.MINE);
         }
+
+        if (isFlag() && !isMine()) {
+            tileUI.update(State.ERROR_MINE);
+        }
     }
 
-    public void registerUI(TileUI tileUI) {
+    void registerUI(TileUI tileUI) {
         this.tileUI = tileUI;
     }
 
     private State getState() {
         if (isOpened()) {
             if (isMine()) {
+                GameProcess.isFail = true;
                 return State.BOOMED_MINE;
             }
 
@@ -68,14 +80,6 @@ public class GameTile extends Tile {
                     return State.EIGHT;
             }
         }
-
-        if (isFlag() && !isMine()) {
-            return State.ERROR_MINE;
-        }
-
-        /*if (isMine() && !isFlag()) {
-            return State.MINE;
-        }*/
 
         return State.CLOSED;
     }

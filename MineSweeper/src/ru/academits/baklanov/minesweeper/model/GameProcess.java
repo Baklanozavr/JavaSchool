@@ -4,14 +4,15 @@ import ru.academits.baklanov.minesweeper.TileUI;
 import ru.academits.baklanov.minesweeper.gui.MineSweeperGUI;
 
 import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class GameProcess {
     private static Difficulty defaultDifficulty = Difficulty.MEDIUM;
 
+    public static boolean isFail = false;
+
     private Difficulty difficulty;
     private MineField mineField;
-    private boolean isFail;
     private int openedTilesCounter;
     private int leftMinesCounter;
     private int timeInSeconds;
@@ -57,25 +58,14 @@ public class GameProcess {
         }
     }
 
-    public GameProcess(Difficulty difficulty) {
-        if (difficulty == null) {
-            throw new NullPointerException("Сложность не установлена!");
-        }
-
-        mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
-        openedTilesCounter = 0;
-        timeInSeconds = 0;
-        leftMinesCounter = difficulty.totalNumberOfMines;
-        isFail = false;
+    private GameProcess(Difficulty difficulty) {
         this.difficulty = difficulty;
 
-        timer = new Timer();
+        mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
+
+        setStartValues();
 
         gameUI = null;
-    }
-
-    public MineField getMineField() {
-        return mineField;
     }
 
     public GameProcess() {
@@ -104,111 +94,118 @@ public class GameProcess {
         return flagsAndMinesCounter == mineField.getTile(i, j).getNumberOfAdjacentMines();
     }
 
-    public void markTile(int clickedIndex) {
-        int verticalIndex = clickedIndex / difficulty.fieldWidth;
-        int horizontalIndex = clickedIndex % difficulty.fieldWidth;
-
+    public void markTile(int verticalIndex, int horizontalIndex) {
         Tile clickedTile = mineField.getTile(verticalIndex, horizontalIndex);
 
-        boolean isMarked = clickedTile.setFlag();
+        if (!clickedTile.isOpened()) {
+            boolean isMarked = clickedTile.setFlag();
 
-        if (isMarked) {
-            --leftMinesCounter;
-        } else {
-            ++leftMinesCounter;
+            if (isMarked) {
+                --leftMinesCounter;
+            } else {
+                ++leftMinesCounter;
+            }
+
+            gameUI.updateMinesBalance(leftMinesCounter);
         }
-
-        gameUI.updateMinesBalance(leftMinesCounter);
     }
 
-    public void openTile(int clickedIndex) {
-        int verticalStartIndex = clickedIndex / difficulty.fieldWidth;
-        int horizontalStartIndex = clickedIndex % difficulty.fieldWidth;
+    public void openTile(int verticalIndex, int horizontalIndex) {
+        Tile clickedTile = mineField.getTile(verticalIndex, horizontalIndex);
 
-        if (!mineField.getTile(verticalStartIndex, horizontalStartIndex).isFlag()) {
+        if (!clickedTile.isFlag()) {
             if (openedTilesCounter == 0) {
-                mineField.setMines(verticalStartIndex, horizontalStartIndex);
+                mineField.setMines(verticalIndex, horizontalIndex);
                 startTimer();
             }
 
-            Queue<Integer> indexesForOpen = new LinkedList<>();
-            HashSet<Integer> visitedIndexes = new HashSet<>();
+            HashSet<Tile> visitedTiles = new HashSet<>();
+            Queue<Tile> tilesForOpen = new LinkedList<>();
 
-            BiConsumer<Integer, HashSet<Integer>> addNeighbors = (verticalIndex, horizontalIndexes) -> {
-                horizontalIndexes.forEach(j -> {
-                    Tile neighbor = mineField.getTile(verticalIndex, j);
+            Consumer<Tile> addNeighbor = (neighbor) -> {
+                if (!neighbor.isOpened() && !neighbor.isFlag()) {
+                    boolean isNotVisited = visitedTiles.add(neighbor);
 
-                    if (!neighbor.isOpened() && !neighbor.isFlag()) {
-                        int newIndex = verticalIndex * difficulty.fieldWidth + j;
-
-                        if (visitedIndexes.add(newIndex)) {
-                            indexesForOpen.add(newIndex);
-                        }
+                    if (isNotVisited) {
+                        tilesForOpen.add(neighbor);
                     }
-                });
+                }
             };
 
-            if (mineField.getTile(verticalStartIndex, horizontalStartIndex).isOpened()) {
-                if (checkAdjacentFlags(verticalStartIndex, horizontalStartIndex)) {
-                    mineField.getIndexesOfNeighbors(verticalStartIndex, horizontalStartIndex).forEach(addNeighbors);
+            if (clickedTile.isOpened()) {
+                if (checkAdjacentFlags(verticalIndex, horizontalIndex)) {
+                    mineField.getNeighbors(verticalIndex, horizontalIndex).forEach(addNeighbor);
                 }
             } else {
-                visitedIndexes.add(clickedIndex);
-                indexesForOpen.add(clickedIndex);
+                visitedTiles.add(clickedTile);
+                tilesForOpen.add(clickedTile);
             }
 
-            Integer index = indexesForOpen.poll();
-            while (index != null) {
-                int verticalIndex = index / difficulty.fieldWidth;
-                int horizontalIndex = index % difficulty.fieldWidth;
+            Tile tile = tilesForOpen.poll();
 
-                Tile selectedTile = mineField.getTile(verticalIndex, horizontalIndex);
-                selectedTile.open();
+            while (tile != null) {
+                tile.open();
 
-                if (selectedTile.getNumberOfAdjacentMines() == 0) {
-                    mineField.getIndexesOfNeighbors(verticalIndex, horizontalIndex).forEach(addNeighbors);
+                if (tile.getNumberOfAdjacentMines() == 0) {
+                    mineField.getNeighbors(tile).forEach(addNeighbor);
                 }
 
-                index = indexesForOpen.poll();
+                tile = tilesForOpen.poll();
             }
 
-            openedTilesCounter += visitedIndexes.size();
+            openedTilesCounter += visitedTiles.size();
+
+            checkVictory();
         }
     }
 
-    public boolean isFail() {
-        return isFail;
+    private void checkVictory() {
+        if (isFail) {
+            mineField.showMines();
+            timer.cancel();
+            gameUI.updateGameState(false);
+        }
+
+        if (isVictory()) {
+
+            timer.cancel();
+            gameUI.updateGameState(true);
+        }
     }
 
     public boolean isVictory() {
         return !isFail && openedTilesCounter == difficulty.getFieldSize() - difficulty.totalNumberOfMines;
     }
 
-    public void restart() {
+    private void setStartValues() {
+        isFail = false;
         leftMinesCounter = difficulty.totalNumberOfMines;
         openedTilesCounter = 0;
-        mineField.clear();
-        isFail = false;
-
         timeInSeconds = 0;
-        timer.cancel();
         timer = new Timer();
+    }
+
+    public void restart() {
+        timer.cancel();
+
+        setStartValues();
 
         gameUI.updateTime(timeInSeconds);
         gameUI.updateMinesBalance(leftMinesCounter);
     }
 
     public void restart(Difficulty difficulty) {
+        if (difficulty == null) {
+            throw new NullPointerException("Сложность не установлена!");
+        }
+
         if (difficulty == this.difficulty) {
+            mineField.clear();
             restart();
         } else {
-            defaultDifficulty = difficulty;
-
             this.difficulty = difficulty;
             mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
-            openedTilesCounter = 0;
-            leftMinesCounter = difficulty.totalNumberOfMines;
-            isFail = false;
+            restart();
         }
     }
 

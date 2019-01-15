@@ -7,7 +7,10 @@ class Tile {
     private int numberOfAdjacentMines;
 
     Tile() {
-        clear();
+        isMine = false;
+        isFlag = false;
+        isOpened = false;
+        numberOfAdjacentMines = 0;
     }
 
     void setMine() {

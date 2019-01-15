@@ -6,80 +6,90 @@ import ru.academits.baklanov.minesweeper.TileUI;
 import javax.swing.*;
 import java.awt.*;
 
-public class TileGUI implements TileUI {
-    private JButton tileButton;
+public class TileButton extends JButton implements TileUI {
+    private int verticalIndex;
+    private int horizontalIndex;
 
-    TileGUI(JButton tileButton) {
-        this.tileButton = tileButton;
+    TileButton(int verticalIndex, int horizontalIndex) {
+        this.verticalIndex = verticalIndex;
+        this.horizontalIndex = horizontalIndex;
 
-        tileButton.setPreferredSize(new Dimension(20, 20));
-        tileButton.setMargin(new Insets(0, 0, 0, 0));
-        tileButton.setFocusPainted(false);
+        setPreferredSize(new Dimension(20, 20));
+        setMargin(new Insets(0, 0, 0, 0));
+        setFocusPainted(false);
     }
 
     @Override
     public void update(GameTile.State state) {
         switch (state) {
             case CLOSED: {
-                tileButton.setText(null);
-                tileButton.setBackground(null);
-                tileButton.setEnabled(true);
+                setText(null);
+                setBackground(null);
+                setEnabled(true);
                 return;
             }
             case FLAG: {
-                tileButton.setText("F");
-                tileButton.setEnabled(false);
+                setText("F");
+                setEnabled(false);
                 return;
             }
             case MINE: {
-                tileButton.setText("X");
+                setText("X");
                 return;
             }
             case ERROR_MINE: {
-                //fieldButtonsArray.get(index).setText("F");
-                tileButton.setBackground(Color.RED);
+                //tileButton.setText("F");
+                setBackground(Color.RED);
                 return;
             }
             case BOOMED_MINE: {
-                tileButton.setText("X");
-                tileButton.setBackground(Color.RED);
+                setText("X");
+                setBackground(Color.RED);
                 return;
             }
             case EMPTY: {
                 break;
             }
             case ONE: {
-                tileButton.setText("1");
+                setText("1");
                 break;
             }
             case TWO: {
-                tileButton.setText("2");
+                setText("2");
                 break;
             }
             case THREE: {
-                tileButton.setText("3");
+                setText("3");
                 break;
             }
             case FOUR: {
-                tileButton.setText("4");
+                setText("4");
                 break;
             }
             case FIVE: {
-                tileButton.setText("5");
+                setText("5");
                 break;
             }
             case SIX: {
-                tileButton.setText("6");
+                setText("6");
                 break;
             }
             case SEVEN: {
-                tileButton.setText("7");
+                setText("7");
                 break;
             }
             case EIGHT: {
-                tileButton.setText("8");
+                setText("8");
             }
         }
-        tileButton.setBackground(Color.WHITE);
+        setBackground(Color.WHITE);
+    }
+
+    int getVerticalIndex() {
+        return verticalIndex;
+    }
+
+    int getHorizontalIndex() {
+        return horizontalIndex;
     }
 }

@@ -11,6 +11,11 @@ import static ru.academits.baklanov.minesweeper.model.GameProcess.getVariantsOfD
 public class MineSweeperGUI implements Runnable {
     private JLabel minesBalanceLabel;
     private JLabel timeLabel;
+    private JLabel infoLabel;
+
+    private JFrame gameFrame;
+    private JPanel gamePanel;
+
     private GameProcess game;
     private JMenuBar menuBar;
     private MineFieldGUI mineFieldGUI;
@@ -20,8 +25,13 @@ public class MineSweeperGUI implements Runnable {
         game = new GameProcess();
         menuBar = new JMenuBar();
         mineFieldGUI = new MineFieldGUI(game);
+        gamePanel = new JPanel();
+
+        gameFrame = new JFrame("MineSweeper by Baklanozavr");
+
         minesBalanceLabel = new JLabel(String.valueOf(game.getDifficulty().getTotalNumberOfMines()));
         timeLabel = new JLabel("0");
+        infoLabel = new JLabel("Вперёд!");
     }
 
     @Override
@@ -31,15 +41,13 @@ public class MineSweeperGUI implements Runnable {
         SwingUtilities.invokeLater(() -> {
             activateMenuBar();
 
-            JFrame frame = new JFrame("MineSweeper by Baklanozavr");
-            frame.setVisible(true);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            gameFrame.setVisible(true);
+            gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            frame.setJMenuBar(menuBar);
+            gameFrame.setJMenuBar(menuBar);
 
-            JPanel gamePanel = new JPanel();
             gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.PAGE_AXIS));
-            frame.add(gamePanel, BorderLayout.CENTER);
+            gameFrame.add(gamePanel, BorderLayout.CENTER);
 
             JPanel infoPanel = new JPanel();
             infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
@@ -47,26 +55,21 @@ public class MineSweeperGUI implements Runnable {
 
             infoPanel.add(minesBalanceLabel);
             infoPanel.add(Box.createHorizontalGlue());
-            JLabel infoLabel = new JLabel();
+
             infoPanel.add(infoLabel);
             infoPanel.add(Box.createHorizontalGlue());
             infoPanel.add(timeLabel);
 
             gamePanel.add(mineFieldGUI);
 
-            frame.pack();
-            frame.setLocationRelativeTo(null);
+            gameFrame.pack();
+            gameFrame.setLocationRelativeTo(null);
 
             //тут что-то планировалось
             if (isNewGame) {
                 gamePanel.removeAll();
                 gamePanel.add(mineFieldGUI);
-                frame.pack();
-            }
-
-            if (game.isFail()) {
-                //fieldButtonsArray.forEach(JButton::removeAll);
-                infoLabel.setText("Вы проиграли!");
+                gameFrame.pack();
             }
 
             if (game.isVictory()) {
@@ -81,7 +84,7 @@ public class MineSweeperGUI implements Runnable {
 
         JMenuItem newGame = new JMenuItem("Новая");
         newGame.addActionListener(event -> {
-            mineFieldGUI.clearButtons();
+            infoLabel.setText("Новая игра");
             game.restart();
         });
         gameMenu.add(newGame);
@@ -91,8 +94,16 @@ public class MineSweeperGUI implements Runnable {
         for (Difficulty difficulty : getVariantsOfDifficulty()) {
             JMenuItem difficultySetting = new JMenuItem(difficulty.getName());
             difficultySetting.addActionListener(event -> {
+                infoLabel.setText("Новая игра");
                 game.restart(difficulty);
+
+                gamePanel.remove(mineFieldGUI);
                 mineFieldGUI = new MineFieldGUI(game);
+                gamePanel.add(mineFieldGUI);
+
+                gameFrame.pack();
+                gameFrame.setLocationRelativeTo(null);
+
             });
             difficultyMenu.add(difficultySetting);
         }
@@ -112,5 +123,13 @@ public class MineSweeperGUI implements Runnable {
 
     public void updateTime(int time) {
         timeLabel.setText(String.valueOf(time));
+    }
+
+    public void updateGameState(boolean isVictory) {
+        if (isVictory) {
+            infoLabel.setText("Победа!");
+        } else {
+            infoLabel.setText("Вы проиграли!");
+        }
     }
 }

@@ -13,10 +13,10 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
     private JFrame gameFrame;
     private JPanel gamePanel;
     private JMenuBar menuBar;
-
-    private JLabel minesBalanceLabel;
-    private JLabel timeLabel;
     private JLabel infoLabel;
+
+    private JTextField minesBalanceTextField;
+    private JTextField timeTextField;
 
     private MineFieldGUI mineFieldGUI;
 
@@ -26,10 +26,19 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
         gameFrame = new JFrame("MineSweeper by Baklanozavr");
         gamePanel = new JPanel();
         menuBar = new JMenuBar();
+        infoLabel = new JLabel("New");
 
-        minesBalanceLabel = new JLabel(String.valueOf(game.getDifficulty().getTotalNumberOfMines()));
-        timeLabel = new JLabel("0");
-        infoLabel = new JLabel("Вперёд!");
+        minesBalanceTextField = new JTextField(String.valueOf(game.getDifficulty().getTotalNumberOfMines()), 3);
+        minesBalanceTextField.setToolTipText("Количество непомеченных мин");
+        minesBalanceTextField.setFont(new Font("Dialog", Font.PLAIN, 20));
+        minesBalanceTextField.setHorizontalAlignment(JTextField.LEFT);
+        minesBalanceTextField.setEditable(false);
+
+        timeTextField = new JTextField("0", 3);
+        timeTextField.setToolTipText("Прошло секунд с начала игры");
+        timeTextField.setFont(new Font("Dialog", Font.PLAIN, 20));
+        timeTextField.setHorizontalAlignment(JTextField.RIGHT);
+        timeTextField.setEditable(false);
 
         mineFieldGUI = new MineFieldGUI(game);
     }
@@ -39,12 +48,12 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
         game.registerUI(this);
 
         JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
-        infoPanel.add(minesBalanceLabel);
-        infoPanel.add(Box.createHorizontalGlue());
-        infoPanel.add(infoLabel);
-        infoPanel.add(Box.createHorizontalGlue());
-        infoPanel.add(timeLabel);
+        infoPanel.setPreferredSize(new Dimension(0, 40));
+        infoPanel.setLayout(new BorderLayout());
+        infoPanel.add(minesBalanceTextField, BorderLayout.LINE_START);
+        infoPanel.add(infoLabel, BorderLayout.CENTER);
+        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        infoPanel.add(timeTextField, BorderLayout.LINE_END);
 
         gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.PAGE_AXIS));
         gamePanel.add(infoPanel);
@@ -55,6 +64,7 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
         gameFrame.setJMenuBar(menuBar);
         gameFrame.add(gamePanel, BorderLayout.CENTER);
         gameFrame.setVisible(true);
+        gameFrame.setResizable(false);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         gameFrame.pack();
@@ -93,9 +103,11 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
 
         game.restart(difficulty);
 
-        minesBalanceLabel.setText(String.valueOf(difficulty.getTotalNumberOfMines()));
-        infoLabel.setText("Новая игра");
-        timeLabel.setText("0");
+        minesBalanceTextField.setText(String.valueOf(difficulty.getTotalNumberOfMines()));
+        infoLabel.setText("New");
+        timeTextField.setText("0");
+
+        mineFieldGUI.block();
 
         if (oldDifficulty != difficulty) {
             gamePanel.remove(mineFieldGUI);
@@ -104,25 +116,28 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
 
             gameFrame.pack();
             gameFrame.setLocationRelativeTo(null);
+        } else {
+            mineFieldGUI.activate();
         }
     }
 
     @Override
     public void updateMinesBalance(int numberOfMines) {
-        minesBalanceLabel.setText(String.valueOf(numberOfMines));
+        minesBalanceTextField.setText(String.valueOf(numberOfMines));
     }
 
     @Override
     public void updateTime(int time) {
-        timeLabel.setText(String.valueOf(time));
+        timeTextField.setText(String.valueOf(time));
     }
 
     @Override
     public void updateGameState(boolean isVictory) {
         if (isVictory) {
-            infoLabel.setText("Победа!");
+            infoLabel.setText("Win!");
         } else {
-            infoLabel.setText("Вы проиграли!");
+            infoLabel.setText("Fail!");
         }
+        mineFieldGUI.block();
     }
 }

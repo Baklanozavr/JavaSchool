@@ -4,13 +4,13 @@ import java.util.*;
 
 class MineField {
     private GameTile[][] field;
-    private int width;
     private int height;
+    private int width;
     private int totalNumberOfMines;
 
-    MineField(int width, int height, int totalNumberOfMines) {
-        this.width = width;
+    MineField(int height, int width, int totalNumberOfMines) {
         this.height = height;
+        this.width = width;
         this.totalNumberOfMines = totalNumberOfMines;
 
         field = new GameTile[height][width];
@@ -23,16 +23,48 @@ class MineField {
     }
 
     GameTile getTile(int i, int j) {
+        checkIndexes(i, j);
         return field[i][j];
     }
 
+    ArrayList<Tile> getNeighbors(int i, int j) {
+        checkIndexes(i, j);
+
+        ArrayList<Tile> neighbors = new ArrayList<>();
+
+        for (int m = i - 1; m <= i + 1; ++m) {
+            if (m >= 0 && m < height) {
+                for (int n = j - 1; n <= j + 1; ++n) {
+                    if (n >= 0 && n < width) {
+                        neighbors.add(field[m][n]);
+                    }
+                }
+            }
+        }
+
+        return neighbors;
+    }
+
+    ArrayList<Tile> getNeighbors(Tile tile) {
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                if (Objects.equals(tile, field[i][j])) {
+                    return getNeighbors(i, j);
+                }
+            }
+        }
+        return null;
+    }
+
     void setMines(int iStart, int jStart) {
+        checkIndexes(iStart, jStart);
+
         field[iStart][jStart].setMine();
         getNeighbors(iStart, jStart).forEach(Tile::setMine);
 
         Random random = new Random();
-        int minesCounter = 0;
 
+        int minesCounter = 0;
         while (minesCounter < totalNumberOfMines) {
             Tile randomTile = field[random.nextInt(height)][random.nextInt(width)];
 
@@ -54,66 +86,25 @@ class MineField {
         }
     }
 
-    private HashMap<Integer, HashSet<Integer>> getIndexesOfNeighbors(int i, int j) {
-        if (i < 0 || i >= height || j < 0 || j >= width) {
-            throw new IllegalArgumentException("Выход за пределы поля!");
-        }
-
-        HashMap<Integer, HashSet<Integer>> indexesOfNeighbors = new HashMap<>();
-
-        for (int m = i - 1; m <= i + 1; ++m) {
-            if (m >= 0 && m < height) {
-                HashSet<Integer> horizontalIndexes = new HashSet<>();
-
-                for (int n = j - 1; n <= j + 1; ++n) {
-                    if (n >= 0 && n < width) {
-                        horizontalIndexes.add(n);
-                    }
-                }
-
-                indexesOfNeighbors.put(m, horizontalIndexes);
-            }
-        }
-
-        return indexesOfNeighbors;
-    }
-
-    ArrayList<Tile> getNeighbors(int i, int j) {
-        ArrayList<Tile> neighbors = new ArrayList<>();
-
-        HashMap<Integer, HashSet<Integer>> indexesOfNeighbors = getIndexesOfNeighbors(i, j);
-
-        indexesOfNeighbors.keySet().forEach(verticalIndex ->
-                indexesOfNeighbors.get(verticalIndex).forEach(horizontalIndex ->
-                        neighbors.add(field[verticalIndex][horizontalIndex])));
-
-        return neighbors;
-    }
-
-    ArrayList<Tile> getNeighbors(Tile tile) {
-        for(int i = 0; i < height; ++i) {
+    void showMines() {
+        for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
-                if (Objects.equals(tile, field[i][j])) {
-                    return getNeighbors(i, j);
-                }
+                field[i][j].showMine();
             }
         }
-        return null;
     }
 
     void clear() {
-        for (Tile[] tiles : field) {
-            for (Tile tile : tiles) {
+        for (Tile[] tilesRow : field) {
+            for (Tile tile : tilesRow) {
                 tile.clear();
             }
         }
     }
 
-    void showMines() {
-        for(int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                field[i][j].showMine();
-            }
+    private void checkIndexes(int height, int width) {
+        if (height < 0 || height >= this.height || width < 0 || width >= this.width) {
+            throw new IllegalArgumentException("Выход за пределы поля!");
         }
     }
 }

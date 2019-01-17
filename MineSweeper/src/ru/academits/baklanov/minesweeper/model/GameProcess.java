@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 public class GameProcess {
     private static Difficulty defaultDifficulty = Difficulty.MEDIUM;
 
-    public static boolean isFail = false;
+    static boolean isFail = false;
 
     private Difficulty difficulty;
     private MineField mineField;
@@ -61,7 +61,7 @@ public class GameProcess {
     private GameProcess(Difficulty difficulty) {
         this.difficulty = difficulty;
 
-        mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
+        mineField = new MineField(difficulty.fieldHeight, difficulty.fieldWidth, difficulty.totalNumberOfMines);
 
         setStartValues();
 
@@ -163,7 +163,6 @@ public class GameProcess {
         }
 
         if (isVictory()) {
-
             timer.cancel();
             gameUI.updateGameState(true);
         }
@@ -190,7 +189,7 @@ public class GameProcess {
             mineField.clear();
         } else {
             this.difficulty = difficulty;
-            mineField = new MineField(difficulty.fieldWidth, difficulty.fieldHeight, difficulty.totalNumberOfMines);
+            mineField = new MineField(difficulty.fieldHeight, difficulty.fieldWidth, difficulty.totalNumberOfMines);
         }
 
         timer.cancel();

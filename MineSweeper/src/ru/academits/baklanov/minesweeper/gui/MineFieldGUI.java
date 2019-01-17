@@ -6,27 +6,36 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 class MineFieldGUI extends JPanel {
+    private ArrayList<TileButton> tileButtonsArray;
+    private ArrayList<TileMouseListener> tileMouseListenersArray;
     private GameProcess mineSweeperGame;
 
     MineFieldGUI(GameProcess game) {
+        int height = game.getDifficulty().getFieldHeight();
+        int width = game.getDifficulty().getFieldWidth();
+
+        tileButtonsArray = new ArrayList<>();
+        tileMouseListenersArray = new ArrayList<>();
         mineSweeperGame = game;
 
-        int width = game.getDifficulty().getFieldWidth();
-        int height = game.getDifficulty().getFieldHeight();
-
-        GridLayout fieldGridLayout = new GridLayout(height, width - 1);
-        this.setLayout(fieldGridLayout);
+        this.setLayout(new GridLayout(height, width - 1));
 
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
                 TileButton button = new TileButton(i, j);
+                tileButtonsArray.add(button);
                 this.add(button);
                 game.registerTileUI(button, i, j);
-                button.addMouseListener(new TileMouseListener());
+
+                TileMouseListener tileMouseListener = new TileMouseListener();
+                tileMouseListenersArray.add(tileMouseListener);
             }
         }
+
+        activate();
     }
 
     private class TileMouseListener implements MouseListener {
@@ -34,12 +43,13 @@ class MineFieldGUI extends JPanel {
         boolean isTilePressed = false;
 
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mouseEntered(MouseEvent e) {
+            isOnTile = true;
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
-            isOnTile = true;
+        public void mousePressed(MouseEvent e) {
+            isTilePressed = true;
         }
 
         @Override
@@ -49,23 +59,32 @@ class MineFieldGUI extends JPanel {
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            isTilePressed = true;
-        }
-
-        @Override
         public void mouseReleased(MouseEvent e) {
             if (isTilePressed && isOnTile) {
                 TileButton button = (TileButton) e.getSource();
 
-                if (!GameProcess.isFail) {
-                    if (SwingUtilities.isRightMouseButton(e)) {
-                        mineSweeperGame.markTile(button.getVerticalIndex(), button.getHorizontalIndex());
-                    } else {
-                        mineSweeperGame.openTile(button.getVerticalIndex(), button.getHorizontalIndex());
-                    }
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    mineSweeperGame.markTile(button.getVerticalIndex(), button.getHorizontalIndex());
+                } else {
+                    mineSweeperGame.openTile(button.getVerticalIndex(), button.getHorizontalIndex());
                 }
             }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+        }
+    }
+
+    void block() {
+        for (int i = 0; i < tileButtonsArray.size(); ++i) {
+            tileButtonsArray.get(i).removeMouseListener(tileMouseListenersArray.get(i));
+        }
+    }
+
+    void activate() {
+        for (int i = 0; i < tileButtonsArray.size(); ++i) {
+            tileButtonsArray.get(i).addMouseListener(tileMouseListenersArray.get(i));
         }
     }
 }

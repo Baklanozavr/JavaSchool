@@ -14,8 +14,8 @@ class MineFieldGUI extends JPanel {
     private GameProcess mineSweeperGame;
 
     MineFieldGUI(GameProcess game) {
-        int height = game.getDifficulty().getFieldHeight();
-        int width = game.getDifficulty().getFieldWidth();
+        int height = game.getGameDifficulty().getFieldHeight();
+        int width = game.getGameDifficulty().getFieldWidth();
 
         tileButtonsArray = new ArrayList<>();
         tileMouseListenersArray = new ArrayList<>();

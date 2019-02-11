@@ -1,7 +1,7 @@
 package ru.academits.baklanov.minesweeper.gui;
 
 import ru.academits.baklanov.minesweeper.MineSweeperUI;
-import ru.academits.baklanov.minesweeper.model.GameProcess.Difficulty;
+import ru.academits.baklanov.minesweeper.model.GameDifficulty;
 import ru.academits.baklanov.minesweeper.model.GameProcess;
 
 import javax.swing.*;
@@ -19,28 +19,30 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
     private JTextField timeTextField;
 
     private MineFieldGUI mineFieldGUI;
+    private TableOfRecordsGUI tableOfRecordsGUI;
 
     public MineSweeperGUI() {
         game = new GameProcess();
 
-        gameFrame = new JFrame("MineSweeper by Baklanozavr");
+        gameFrame = new JFrame("MineSweeper game");
         gamePanel = new JPanel();
         menuBar = new JMenuBar();
         infoLabel = new JLabel("New");
 
-        minesBalanceTextField = new JTextField(String.valueOf(game.getDifficulty().getTotalNumberOfMines()), 3);
-        minesBalanceTextField.setToolTipText("Количество непомеченных мин");
+        minesBalanceTextField = new JTextField(String.valueOf(game.getGameDifficulty().getTotalNumberOfMines()), 3);
+        minesBalanceTextField.setToolTipText("Number of unmarked mines");
         minesBalanceTextField.setFont(new Font("Dialog", Font.PLAIN, 20));
         minesBalanceTextField.setHorizontalAlignment(JTextField.LEFT);
         minesBalanceTextField.setEditable(false);
 
         timeTextField = new JTextField("0", 3);
-        timeTextField.setToolTipText("Прошло секунд с начала игры");
+        timeTextField.setToolTipText("Seconds from the start of this game");
         timeTextField.setFont(new Font("Dialog", Font.PLAIN, 20));
         timeTextField.setHorizontalAlignment(JTextField.RIGHT);
         timeTextField.setEditable(false);
 
         mineFieldGUI = new MineFieldGUI(game);
+        tableOfRecordsGUI = new TableOfRecordsGUI(gameFrame);
     }
 
     @Override
@@ -59,7 +61,7 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
         gamePanel.add(infoPanel);
         gamePanel.add(mineFieldGUI);
 
-        menuBar.add(createMenuBar());
+        fillMenuBar(menuBar);
 
         gameFrame.setJMenuBar(menuBar);
         gameFrame.add(gamePanel, BorderLayout.CENTER);
@@ -71,45 +73,46 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
         gameFrame.setLocationRelativeTo(null);
     }
 
-    private JMenu createMenuBar() {
-        JMenu gameMenu = new JMenu("Игра");
+    private void fillMenuBar(JMenuBar menuBar) {
+        JMenu gameMenu = new JMenu("Game");
+        menuBar.add(gameMenu);
 
-        JMenuItem newGame = new JMenuItem("Новая");
+        JMenuItem newGame = new JMenuItem("Start new game");
+        newGame.addActionListener(event -> restartGame(game.getGameDifficulty()));
         gameMenu.add(newGame);
         gameMenu.addSeparator();
 
-        JMenu difficultyMenu = new JMenu("Сложность");
+        JMenuItem showRecords = new JMenuItem("Show records");
+        showRecords.addActionListener(event -> tableOfRecordsGUI.showTable(game.getGameDifficulty()));
+        gameMenu.add(showRecords);
+        gameMenu.addSeparator();
+
+        JMenu difficultyMenu = new JMenu("Set difficulty");
+        for (GameDifficulty gameDifficulty : GameDifficulty.values()) {
+            JMenuItem difficultySetting = new JMenuItem(gameDifficulty.getName());
+            difficultySetting.addActionListener(event -> restartGame(gameDifficulty));
+            difficultyMenu.add(difficultySetting);
+        }
         gameMenu.add(difficultyMenu);
         gameMenu.addSeparator();
 
-        JMenuItem exit = new JMenuItem("Выйти");
-        gameMenu.add(exit);
-
-        for (Difficulty difficulty : Difficulty.values()) {
-            JMenuItem difficultySetting = new JMenuItem(difficulty.getName());
-
-            difficultySetting.addActionListener(event -> restartGame(difficulty));
-
-            difficultyMenu.add(difficultySetting);
-        }
-        newGame.addActionListener(event -> restartGame(game.getDifficulty()));
+        JMenuItem exit = new JMenuItem("Exit");
         exit.addActionListener(event -> System.exit(0));
-
-        return gameMenu;
+        gameMenu.add(exit);
     }
 
-    private void restartGame(Difficulty difficulty) {
-        Difficulty oldDifficulty = game.getDifficulty();
+    private void restartGame(GameDifficulty gameDifficulty) {
+        GameDifficulty oldGameDifficulty = game.getGameDifficulty();
 
-        game.restart(difficulty);
+        game.restart(gameDifficulty);
 
-        minesBalanceTextField.setText(String.valueOf(difficulty.getTotalNumberOfMines()));
+        minesBalanceTextField.setText(String.valueOf(gameDifficulty.getTotalNumberOfMines()));
         infoLabel.setText("New");
         timeTextField.setText("0");
 
         mineFieldGUI.block();
 
-        if (oldDifficulty != difficulty) {
+        if (oldGameDifficulty != gameDifficulty) {
             gamePanel.remove(mineFieldGUI);
             mineFieldGUI = new MineFieldGUI(game);
             gamePanel.add(mineFieldGUI);
@@ -135,9 +138,15 @@ public class MineSweeperGUI implements Runnable, MineSweeperUI {
     public void updateGameState(boolean isVictory) {
         if (isVictory) {
             infoLabel.setText("Win!");
+            game.registerCurrentWin(getNameOfPlayer());
+            tableOfRecordsGUI.showTable(game.getGameDifficulty());
         } else {
             infoLabel.setText("Fail!");
         }
         mineFieldGUI.block();
+    }
+
+    private String getNameOfPlayer() {
+        return JOptionPane.showInputDialog(gameFrame, "What's your name?");
     }
 }

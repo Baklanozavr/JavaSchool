@@ -2,95 +2,74 @@ package ru.academits.baklanov.minesweeper.model;
 
 import ru.academits.baklanov.minesweeper.TileUI;
 import ru.academits.baklanov.minesweeper.MineSweeperUI;
+import ru.academits.baklanov.minesweeper.model.records.GameRecords;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 public class GameProcess {
-    private static Difficulty defaultDifficulty = Difficulty.MEDIUM;
+    private final static GameDifficulty DEFAULT_GAME_DIFFICULTY = GameDifficulty.MEDIUM;
 
     static boolean isFail = false;
 
-    private Difficulty difficulty;
+    private GameDifficulty gameDifficulty;
+    private MineSweeperUI gameUI;
+    private Timer timer;
     private MineField mineField;
     private int openedTilesCounter;
     private int leftMinesCounter;
+    private int clicksCounter;
     private int timeInSeconds;
-    private Timer timer;
 
-    private MineSweeperUI gameUI;
+    private GameProcess(GameDifficulty gameDifficulty) {
+        this.gameDifficulty = gameDifficulty;
+        gameUI = null;
 
-    public enum Difficulty {
-        EASY(8, 8, 10, "Новичок"),
-        MEDIUM(16, 16, 40, "Любитель"),
-        HARD(31, 16, 99, "Профессионал");
-
-        private final int fieldWidth;
-        private final int fieldHeight;
-        private final int totalNumberOfMines;
-        private String name;
-
-        Difficulty(int fieldWidth, int fieldHeight, int totalNumberOfMines, String name) {
-            this.fieldWidth = fieldWidth;
-            this.fieldHeight = fieldHeight;
-            this.totalNumberOfMines = totalNumberOfMines;
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getFieldWidth() {
-            return fieldWidth;
-        }
-
-        public int getFieldHeight() {
-            return fieldHeight;
-        }
-
-        public int getFieldSize() {
-            return fieldHeight * fieldWidth;
-        }
-
-        public int getTotalNumberOfMines() {
-            return totalNumberOfMines;
-        }
-    }
-
-    private GameProcess(Difficulty difficulty) {
-        this.difficulty = difficulty;
-
-        mineField = new MineField(difficulty.fieldHeight, difficulty.fieldWidth, difficulty.totalNumberOfMines);
+        mineField = new MineField(
+                gameDifficulty.getFieldHeight(),
+                gameDifficulty.getFieldWidth(),
+                gameDifficulty.getTotalNumberOfMines());
 
         setStartValues();
-
-        gameUI = null;
     }
 
     public GameProcess() {
-        this(defaultDifficulty);
+        this(DEFAULT_GAME_DIFFICULTY);
     }
 
-    public Difficulty getDifficulty() {
-        return difficulty;
+    public GameDifficulty getGameDifficulty() {
+        return gameDifficulty;
     }
 
-    private boolean checkAdjacentFlags(int i, int j) {
-        ArrayList<Tile> neighbors = mineField.getNeighbors(i, j);
-
-        int flagsAndMinesCounter = 0;
-
-        for (Tile neighbor : neighbors) {
-            if (!neighbor.isOpened() && neighbor.isFlag()) {
-                ++flagsAndMinesCounter;
-            }
+    public void restart(GameDifficulty gameDifficulty) {
+        if (gameDifficulty == null) {
+            throw new NullPointerException("Сложность не установлена!");
         }
 
-        return flagsAndMinesCounter == mineField.getTile(i, j).getNumberOfAdjacentMines();
+        if (gameDifficulty == this.gameDifficulty) {
+            mineField.clear();
+        } else {
+            this.gameDifficulty = gameDifficulty;
+            mineField = new MineField(
+                    gameDifficulty.getFieldHeight(),
+                    gameDifficulty.getFieldWidth(),
+                    gameDifficulty.getTotalNumberOfMines());
+        }
+
+        timer.cancel();
+        setStartValues();
+    }
+
+    public void registerUI(MineSweeperUI gameUI) {
+        this.gameUI = gameUI;
+    }
+
+    public void registerTileUI(TileUI tileUI, int verticalIndex, int horizontalIndex) {
+        mineField.getTile(verticalIndex, horizontalIndex).registerUI(tileUI);
     }
 
     public void markTile(int verticalIndex, int horizontalIndex) {
+        ++clicksCounter;
         Tile clickedTile = mineField.getTile(verticalIndex, horizontalIndex);
 
         if (!clickedTile.isOpened()) {
@@ -107,6 +86,7 @@ public class GameProcess {
     }
 
     public void openTile(int verticalIndex, int horizontalIndex) {
+        ++clicksCounter;
         Tile clickedTile = mineField.getTile(verticalIndex, horizontalIndex);
 
         if (!clickedTile.isFlag()) {
@@ -155,6 +135,24 @@ public class GameProcess {
         }
     }
 
+    private boolean checkAdjacentFlags(int i, int j) {
+        ArrayList<Tile> neighbors = mineField.getNeighbors(i, j);
+
+        int flagsAndMinesCounter = 0;
+
+        for (Tile neighbor : neighbors) {
+            if (!neighbor.isOpened() && neighbor.isFlag()) {
+                ++flagsAndMinesCounter;
+            }
+        }
+
+        return flagsAndMinesCounter == mineField.getTile(i, j).getNumberOfAdjacentMines();
+    }
+
+    private boolean isVictory() {
+        return !isFail && openedTilesCounter == gameDifficulty.getFieldSize() - gameDifficulty.getTotalNumberOfMines();
+    }
+
     private void checkVictory() {
         if (isFail) {
             mineField.showMines();
@@ -168,40 +166,17 @@ public class GameProcess {
         }
     }
 
-    private boolean isVictory() {
-        return !isFail && openedTilesCounter == difficulty.getFieldSize() - difficulty.totalNumberOfMines;
+    public void registerCurrentWin(String nameOfPlayer) {
+        GameRecords.TABLE.registerNewRecord(gameDifficulty, timeInSeconds, clicksCounter, nameOfPlayer);
     }
 
     private void setStartValues() {
         isFail = false;
-        leftMinesCounter = difficulty.totalNumberOfMines;
+        leftMinesCounter = gameDifficulty.getTotalNumberOfMines();
         openedTilesCounter = 0;
+        clicksCounter = 0;
         timeInSeconds = 0;
         timer = new Timer();
-    }
-
-    public void restart(Difficulty difficulty) {
-        if (difficulty == null) {
-            throw new NullPointerException("Сложность не установлена!");
-        }
-
-        if (difficulty == this.difficulty) {
-            mineField.clear();
-        } else {
-            this.difficulty = difficulty;
-            mineField = new MineField(difficulty.fieldHeight, difficulty.fieldWidth, difficulty.totalNumberOfMines);
-        }
-
-        timer.cancel();
-        setStartValues();
-    }
-
-    public void registerUI(MineSweeperUI gameUI) {
-        this.gameUI = gameUI;
-    }
-
-    public void registerTileUI(TileUI tileUI, int verticalIndex, int horizontalIndex) {
-        mineField.getTile(verticalIndex, horizontalIndex).registerUI(tileUI);
     }
 
     private void startTimer() {
